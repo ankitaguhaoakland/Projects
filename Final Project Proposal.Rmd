@@ -10,7 +10,7 @@ Jacob Martin
 
 Project Title
 -------------
-Make up a name for your project.
+Analyzing EEG Signals to predict the motor-sensory actions and their relations to Schezophrenia 
 
 Type of Final Project
 ---------------------
@@ -20,10 +20,17 @@ of the three types I specified in the syllabus.
 
 Executive Summary of the Proposed Project
 -----------------------------------------
+During talking, patients with schizophrenia show less evidence of pretalking activity and less suppression of the speech sound, consistent with dysfunction of efference copy and corollary discharge, respectively.
 
-During the movement, expected sensations resulting from the movement are effectively subtracted from the real sensations, resulting in net suppression. The greater the match between the expected and experienced sensations, the greater the suppression of the response. Thus, the efference copy and corollary discharge form the working parts of a motor-sensory prediction system, whereby the consequences of motor actions are processed efficiently and economically. These systems are critical to survival because errors in prediction are costly.
+During the movement, expected sensations resulting from the movement are effectively subtracted from the real sensations, resulting in net suppression. The greater the match between the expected and experienced sensations, the greater the suppression of the response. The greater the match between the expected and experienced sensations, the greater the suppression of the response. Thus, the efference copy and corollary discharge form the working parts of a motor-sensory prediction system, whereby the consequences of motor actions are processed efficiently and economically. These systems are critical to survival because errors in prediction are costly. 
 
-Describe the proposed project in a few paragraphs. I know that this will evolve.
+Source: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4059422/
+
+The lateralized readiness potential (LRP) associated with the motor plan preceding presses to deliver tones was estimated by comparing right and left hemispheres’ neural activity. The relationship between N1 suppression and LRP amplitude was assessed. LRP preceding button presses to deliver tones was larger in HC than SZ, as was N1 suppression.
+
+We predicted that we would see suppression of auditory cortical responses to self-delivered tones, as reported by others, that this suppression will be reduced in patients with schizophrenia, and that the prepress neural activity, as measured by the late RP, would be reduced in patients and be associated with suppression in HCs but not in patients.
+
+"Describe the proposed project in a few paragraphs. I know that this will evolve.
 Keep in mind that there are a number of techniques and tools that we 
 will learn in the upcoming weeks that you might want to use in your project. 
 Take a look at the Schedule of Topics in the Syllabus and/or the 
