@@ -1,0 +1,50 @@
+
+Advanced Business Analytics – Final Project Proposal
+====================================================
+
+Team Members
+------------
+Ankita Guha
+Kara Marsh
+Jacob Martin
+
+Project Title
+-------------
+Make up a name for your project.
+
+Type of Final Project
+---------------------
+Look back at the Moodle link describing the various types of projects. 
+What type of project are you proposing? Feel free to suggest a variant 
+of the three types I specified in the syllabus. 
+
+Executive Summary of the Proposed Project
+-----------------------------------------
+
+During the movement, expected sensations resulting from the movement are effectively subtracted from the real sensations, resulting in net suppression. The greater the match between the expected and experienced sensations, the greater the suppression of the response. Thus, the efference copy and corollary discharge form the working parts of a motor-sensory prediction system, whereby the consequences of motor actions are processed efficiently and economically. These systems are critical to survival because errors in prediction are costly.
+
+Describe the proposed project in a few paragraphs. I know that this will evolve.
+Keep in mind that there are a number of techniques and tools that we 
+will learn in the upcoming weeks that you might want to use in your project. 
+Take a look at the Schedule of Topics in the Syllabus and/or the 
+open version of last year's Moodle site at hselab.org (Courses and then
+pick the PCBA course).
+
+Also mention whether you think you'll use R or Python or both. Again,
+you can change your mind later.
+
+
+Data Needs and Sources
+-----------------------
+Describe the type of data needs and how you might go about obtaining the necessary data. 
+
+Anticipated Challenges
+List any challenges you anticipate in terms of data gathering and preparation,
+analysis and model building, supporting software machinery development 
+or anything else you can think of. Don’t worry, there will be plenty 
+of challenges that you will never foresee. :)
+
+Personal Learning Objectives
+----------------------------
+What new analytical techniques, tools, approaches, etc. do you wish 
+to learn through doing this project? 
