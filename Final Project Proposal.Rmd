@@ -10,13 +10,14 @@ Jacob Martin
 
 Project Title
 -------------
-Analyzing EEG Signals to predict the motor-sensory actions and their relations to Schezophrenia 
+Analyzing EEG Signals to predict the motor-sensory actions and their relations to Schezophrenia & other Neural Diseases
 
 Type of Final Project
 ---------------------
-Look back at the Moodle link describing the various types of projects. 
-What type of project are you proposing? Feel free to suggest a variant 
-of the three types I specified in the syllabus. 
+Project Type I - Analysis of EEG Signals
+
+Based on the EEG signal data available for various subjects, we will be focussing our analysis to find the difference in motor-sensory activities in healthy subjects to that of patients suffering from Schezophrenia. From the EEG signals so available we can eventually also predict the chances of Epilepsy, chances of Alzheimer, drying and damage of Neurons and so on and so forth.  Finally all these analysis would help us to visualize, summarize, predict, and understand the underlying relationships between the EEG signals with various motor-activities such as (hand movement & leg movement, respond to external stimuli such as : talking, facial expression etc) that could eventually form the basis for building medical devices for patients with these neurological disabilities the ability to move through the world with greater autonomy.
+
 
 Executive Summary of the Proposed Project
 -----------------------------------------
