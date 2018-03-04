@@ -16,43 +16,41 @@ Type of Final Project
 ---------------------
 Project Type I - Analysis of EEG Signals
 
-Based on the EEG signal data available for various subjects, we will be focussing our analysis to find the difference in motor-sensory activities in healthy subjects to that of patients suffering from Schezophrenia. From the EEG signals so available we can eventually also predict the chances of Epilepsy, chances of Alzheimer, drying and damage of Neurons and so on and so forth.  Finally all these analysis would help us to visualize, summarize, predict, and understand the underlying relationships between the EEG signals with various motor-activities such as (hand movement & leg movement, respond to external stimuli such as : talking, facial expression etc) that could eventually form the basis for building medical devices for patients with these neurological disabilities the ability to move through the world with greater autonomy.
+Based on the EEG signal data available for various subjects, we will be focussing our analysis to find the difference in motor-sensory activities in healthy subjects to that of patients suffering from Schezophrenia. From the EEG signals so available we can eventually also predict the chances of Epilepsy, chances of Alzheimer, drying and damage of Neurons and so on and so forth.  Finally all these analysis would help us to visualize, summarize, predict, and understand the underlying relationships between the EEG signals with various motor-activities such as (hand movement & leg movement, respond to external stimuli by virtue of speaking, facial expression etc) that could eventually form the basis for building medical devices for patients with these neurological disabilities and thereby empowering these patients with the ability to move through the world with greater autonomy.
 
 
 Executive Summary of the Proposed Project
 -----------------------------------------
-During talking, patients with schizophrenia show less evidence of pretalking activity and less suppression of the speech sound, consistent with dysfunction of efference copy and corollary discharge, respectively.
+Neurological disorders are diseases of the brain, spine and the nerves that connect them. In recognizing the signs and symptoms of neurological problems, it is first important to distinguish the various types of neurological disorders. And in most cases EEG (Electroencephalography) is the diagnostic procedure followed universally to understand and classify the numerous kinds of neurological disorders.
 
-During the movement, expected sensations resulting from the movement are effectively subtracted from the real sensations, resulting in net suppression. The greater the match between the expected and experienced sensations, the greater the suppression of the response. The greater the match between the expected and experienced sensations, the greater the suppression of the response. Thus, the efference copy and corollary discharge form the working parts of a motor-sensory prediction system, whereby the consequences of motor actions are processed efficiently and economically. These systems are critical to survival because errors in prediction are costly. 
+Schizophrenia is one of the neurological disorders that affects about 1% of people across the globe. One possible explanation for some of the symptoms of schizophrenia is that one or more problems with the corollary discharge process in the nervous system makes it difficult for patients to differentiate between internally and externally generated stimuli. As for example, during talking, patients with schizophrenia show less evidence of pretalking activity and less suppression of the speech sound, consistent with dysfunction of efference copy and corollary discharge, respectively.Therefore, studying this process and its relationship to symptoms in the illness might allow us to better understand abnormal brain processes in patients with this diagnosis.
 
-Source: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4059422/
+In a previously published EEG experiment (https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4059422/) the following conditions were assesed, where a simple button pressing task in which subjects either (1) pressed a button to immediately generated a tone, (2) passively listened to the same tone, or (3) pressed a button without generating a tone to study the corollary discharge in people with schizophrenia and comparison controls. It was found that comparison controls suppressed the N100, a negative deflection in EEG brain wave 100 milliseconds after the onset of a sound, when they pressed a button to generate a tone compared to passive playback, but patients with schizophrenia did not.
 
-The lateralized readiness potential (LRP) associated with the motor plan preceding presses to deliver tones was estimated by comparing right and left hemispheres’ neural activity. The relationship between N1 suppression and LRP amplitude was assessed. LRP preceding button presses to deliver tones was larger in HC than SZ, as was N1 suppression.
+Epilepsy is another neurological disorders that affects the normal functioning of the brain's nerve cell activities, that might eventually lead to seizures. These abnormal brain activities can be also traced in EEG signals and can help to identify the detection of epileptic seizures.   
 
-We predicted that we would see suppression of auditory cortical responses to self-delivered tones, as reported by others, that this suppression will be reduced in patients with schizophrenia, and that the prepress neural activity, as measured by the late RP, would be reduced in patients and be associated with suppression in HCs but not in patients.
+We might have to use some Algorithms, Sampling Techniques, Classifiers, PCA (Principal Component Analysis), ANOVA, Logistic Models, and SVM (Support Vector Machine) to extract and identify some of the key characteristic features of EEG signals to differentiate between healthy subjects and patients with neurological disorders.
 
-"Describe the proposed project in a few paragraphs. I know that this will evolve.
-Keep in mind that there are a number of techniques and tools that we 
-will learn in the upcoming weeks that you might want to use in your project. 
-Take a look at the Schedule of Topics in the Syllabus and/or the 
-open version of last year's Moodle site at hselab.org (Courses and then
-pick the PCBA course).
-
-Also mention whether you think you'll use R or Python or both. Again,
-you can change your mind later.
+We might start our Project with R and eventually use both R & Python depending on the complexity of the project situtaion as we dive deep into analyzing the data sets. 
 
 
 Data Needs and Sources
 -----------------------
-Describe the type of data needs and how you might go about obtaining the necessary data. 
+We are going to use the following datasets from Kaggle:
+Source: https://www.kaggle.com/broach/button-tone-sz/data
 
-Anticipated Challenges
-List any challenges you anticipate in terms of data gathering and preparation,
-analysis and model building, supporting software machinery development 
-or anything else you can think of. Don’t worry, there will be plenty 
-of challenges that you will never foresee. :)
+Anticipated Challenges: 
+
+While building model and data gathering for the purpose of predicting Epilepsy we might need to have some domain knowledge on how to prepare and build the model to read and interpret the EEG signals. Similarly we might face challenges while trying to identify and diagnose other Neurological disorders by decoding the EEG signals.  
+
+Sources: 
+These are some of the articles that we might refer to while trying to predict other Neurological disorders by deciphering the EEG signals.
+
+i) https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4883168/
+ii) https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=6&cad=rja&uact=8&ved=0ahUKEwjlmbbD3dHZAhXF6oMKHYdpBDoQFghhMAU&url=http%3A%2F%2Fwww.mdpi.com%2F1099-4300%2F19%2F6%2F222%2Fpdf&usg=AOvVaw1Q2m5vSmlBEA_0E_4dRqbe
+iii) https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5574243/
+
 
 Personal Learning Objectives
 ----------------------------
-What new analytical techniques, tools, approaches, etc. do you wish 
-to learn through doing this project? 
+We aim to enhance our skills in terms of predictive, descriptive, and prescriptive analytics. We also wish to learn more about building various Linear & Non-Linear Models in R & Python to build significant Predictive Models. We would like to explore and learn more about the various library functions available with both R and Python.    
