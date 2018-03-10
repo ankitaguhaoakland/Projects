@@ -1,0 +1,37 @@
+
+Advanced Business Analytics – Final Project Proposal
+====================================================
+
+Team Members
+------------
+Ankita Guha
+Kara Marsh
+Jacob Martin
+
+Project Title
+-------------
+Analyzing EPA data to determine patterns in pollution
+
+Type of Final Project
+---------------------
+Project Type I - Analysis of EPA data
+
+
+Executive Summary of the Proposed Project
+-----------------------------------------
+We will be analyzing a large data set from the EPA. This data set contains information on the location, time, type, substance, and results of individual sample testing. We will be performing exploratory data analysis in R to find some general trends within subsets of the data. Based on this exploratory analysis, we will pick some subset of the data on which to perform linear and non-linear analysis to find models and relationships that may be predictive of future samples. Because this data set covers sampling from 1987 to 2017, we can test our models using the data within the set. For example, seeing if we can model trends from 1987 to 2015 in order to predict 2016 and 2017 values. 
+
+
+Data Needs and Sources
+-----------------------
+We are going to use the following datasets from Kaggle:
+Source: https://www.kaggle.com/epa/air-quality
+
+Anticipated Challenges: 
+
+Because we are dealing with a very large data set - more than 2 million rows - we may need to segment the data in order to perform our analysis on it. Accidentally analyzing the whole data set at one time could lead to very slow computations or mismatched information. (For example, because the data covers different states, years, and pollutants, it is unlikely there is a strong causation affect across all variables.)
+
+
+Personal Learning Objectives
+----------------------------
+We aim to enhance our skills in terms of predictive, descriptive, and prescriptive analytics. We also wish to learn more about building various Linear & Non-Linear Models in R & Python to build significant Predictive Models. We would like to explore and learn more about the various library functions available with both R and Python.
