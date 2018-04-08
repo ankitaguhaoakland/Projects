@@ -1,0 +1,56 @@
+---
+title: 'Data Cleaning and Data Preparation - Phase 1'
+output: html_document
+Authors: Ankita Guha, Kara Marsh, Jacob Martin
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+Reading the data file to our dataframe for cleaning the unwanted datas. 
+```{r}
+air_quality <- read.csv(file='data/epa_air_quality_annual_summary.csv')
+
+```
+
+Let's try to check our dataframe's consistency with terms of the available data.
+
+```{r}
+# Checking Data Quality
+summary(air_quality)
+```
+
+Looks like there are a lot of data that are redundant and that won't effect our analysis. Hence, removing them for the ease of analysis
+
+```{r removing redundant variables}
+cleaned1_AQ = subset(air_quality, select = -c(primary_exceedance_count, secondary_exceedance_count, first_max_non_overlapping_value, second_max_non_overlapping_value, first_no_max_datetime, second_no_max_datetime, datum, local_site_name, city_name, cbsa_name, first_max_datetime, second_max_datetime, third_max_datetime, fourth_max_datetime, poc, null_data_count, state_code, county_code, site_num))
+```
+
+Let's try to remove the NA's now
+
+```{r removing some NA}
+cleaned2_AQ <- na.omit(cleaned1_AQ)
+```
+
+For the next phase of cleaning and preparaing the data, let's read the datas into another CSV File, so that we can continue our analysis with the next cleaned dataset in our next RMD File.
+
+```{r write to a CSV File for analysis in next RMD File}
+# Write CSV in R
+write.csv(cleaned2_AQ, file = "cleaned2_AQ.csv")
+```
+
+Let's check the structure of the various variables used in the data frame.
+
+```{r assessing the dataframe structure}
+str(cleaned2_AQ)
+```
+Let's see if we have removed the NA's or not by rechecking our dataframes once again. 
+
+```{r summary of dataframe}
+summary(cleaned2_AQ)
+```
+
+Yep, looks like we have removed almost all the NA's from our dataframe. 
+
