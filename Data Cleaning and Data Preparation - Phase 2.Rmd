@@ -1,0 +1,31 @@
+---
+title: "Data Cleaning and Data Preparation - Phase 2"
+output: html_document
+Author: Ankita, Kara
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Let's read the previously cleaned CSV File into a seperate data frame to proceed with the cleaning process. 
+
+```{r Read the prev CSV into a df}
+air_quality1 <- read.csv(file='cleaned2_AQ.csv')
+```
+
+Let's check if all of our variables are cleaned and does not contain any missing values or data that might mislead our analysis.
+
+```{r checking NA}
+is.na.data.frame(air_quality1)
+```
+
+So, looks like our dataframe does not have any NA values. But since it is a huge dataframe let's try to visualize if we have any missing data pattern just to be double sure. 
+
+```{r plotting missing data if any}
+library(VIM)
+explore_missingdata <- aggr(air_quality1, col=c('yellow','red'), numbers=TRUE, sortVars=TRUE, labels=names(data),cex.axis=.7, gap=3, ylab=c("Histogram of missing data","Pattern"))
+```
+
+Perfect! Looks like we do not have any missing data values any more. 
+
