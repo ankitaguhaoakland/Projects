@@ -1,7 +1,7 @@
 ---
 title: "Data Cleaning and Data Preparation - Phase 2"
 output: html_document
-Author: Ankita, Kara
+Author: AKJ
 ---
 
 ```{r setup, include=FALSE}
@@ -24,7 +24,7 @@ So, looks like our dataframe does not have any NA values. But since it is a huge
 
 ```{r plotting missing data if any}
 library(VIM)
-explore_missingdata <- aggr(air_quality1, col=c('yellow','red'), numbers=TRUE, sortVars=TRUE, labels=names(data),cex.axis=.7, gap=3, ylab=c("Histogram of missing data","Pattern"))
+explore_missingdata <- aggr(air_quality1, col=c('yellow','red'), numbers=TRUE, sortVars=TRUE, labels=names(data),cex.axis=.4, gap=3, ylab=c("Histogram of missing data","Pattern"))
 ```
 
 Perfect! Looks like we do not have any missing data values any more. 
