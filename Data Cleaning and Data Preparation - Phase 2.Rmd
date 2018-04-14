@@ -29,3 +29,17 @@ explore_missingdata <- aggr(air_quality1, col=c('yellow','red'), numbers=TRUE, s
 
 Perfect! Looks like we do not have any missing data values any more. 
 
+```{r dataframe structure}
+str(cleaned2_AQ)
+```
+
+Finally let's check the summary of our dataframe
+
+```{r}
+summary(cleaned2_AQ)
+```
+
+Okay, so looks like we are ready for our first level of EDA!  
+
+**Conclusion**
+As it is evident from our data frame that for the variable *method_name* we still have some NA values, but since it is a character string hence, it skipped from our identification of missing data values.We shall just leave these NA as is, and make sure that we minimize their impact on our analysis further. Moreover since these are character values or strings and hence statistical imputations such as Mean or Median won't make sense for obvious reasons. 
