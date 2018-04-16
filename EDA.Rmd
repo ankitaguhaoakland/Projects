@@ -22,7 +22,7 @@ To meet the purpose of Proposition 1, let's try to scoop out some of the chunk o
 library(dplyr)
 
 eda1 <- subset(eda, select = c(latitude, longitude, parameter_name, method_name, year, arithmetic_mean, arithmetic_standard_dev, state_name))
-rm(eda)
+rm(eda) 
 ```
 
 
@@ -108,9 +108,7 @@ ggplot(data = eda2017) + geom_histogram(aes(x = arithmetic_standard_dev), binwid
 ```
 
 
-
-
-Looks like the distribution of the pollutants are almost similar in the entire datasets to that of the year 2017. Howver for the year of 1987 the density of distribution of the pollutants looks small.
+Looks like the distribution of the pollutants are almost similar in the entire datasets to that of the year 2017. Howver for the year of 1987 the density of distribution of the pollutants looks small. The only difference in the pollution density distribution is that in the year of 1987 and 2017 where at one point some of the pollutants density seemed to be at higher than that of the 2017.
 
 ```{r density plot}
 ggplot(eda1, aes(x=arithmetic_mean)) + geom_density(fill = "plum", alpha = 0.90) + scale_x_log10()
@@ -127,9 +125,9 @@ ggplot(eda2017, aes(x="Pollutants", y=arithmetic_mean)) + geom_violin(fill = "sa
 ```{r histograms}
 library(ggplot2)
 ggplot(data = eda1) + geom_histogram(aes(x = arithmetic_mean), fill = "plum", color = "black") + labs(
-    x = "Pollutants",                                                 # x axis title
-    y = "Number of Pollutants",                                       # y axis title
-    title = "Distribution of pollutants across US for 30 years"       # main title of figure
+    x = "Pollutant Mean",                                          # x axis title
+    y = "Actual Pollutants",                                       # y axis title
+    title = "Distribution of pollutants across US for 30 years"    # main title of figure
   ) + scale_x_log10()
 ```
 
@@ -137,8 +135,8 @@ ggplot(data = eda1) + geom_histogram(aes(x = arithmetic_mean), fill = "plum", co
 ```{r}
 library(ggplot2)
 ggplot(data = eda1987) + geom_histogram(aes(x = arithmetic_mean), fill = "steelblue", color = "black") + labs(
-    x = "Pollutants",                                                 # x axis title
-    y = "Number of Pollutants",                                       # y axis title
+    x = "Pollutant Mean",                                                 # x axis title
+    y = "Actual Pollutants",                                       # y axis title
     title = "Distribution of pollutants across US for the year of 1987"       # main title of figure
   ) + scale_x_log10()
 ```
@@ -146,8 +144,8 @@ ggplot(data = eda1987) + geom_histogram(aes(x = arithmetic_mean), fill = "steelb
 ```{r}
 library(ggplot2)
 ggplot(data = eda2017) + geom_histogram(aes(x = arithmetic_mean), fill = "salmon", color = "black") + labs(
-    x = "Pollutants",                                                 # x axis title
-    y = "Number of Pollutants",                                       # y axis title
+    x = "Pollutant Mean",                                                 # x axis title
+    y = "Actual Pollutants",                                       # y axis title
     title = "Distribution of pollutants across US for the year of 2017"       # main title of figure
   ) + scale_x_log10()
 ```
@@ -184,6 +182,8 @@ ggplot(eda2, aes(x=factor(year), y=arithmetic_mean, color=year)) + geom_boxplot(
 ) + scale_y_log10()
 ```
 
+
+
 ```{r}
 library(ggmap)
 library(mapdata)
@@ -193,26 +193,126 @@ library(viridis)
 ```
 
 ```{r}
-ggplot(data = eda1987) + 
+ggplot(data = eda2017) + 
   geom_polygon(aes(x = longitude, y = latitude, fill = state_name)) + 
   coord_quickmap() +
   guides(fill = FALSE)
 ```
 
-```{r}
+Let's try to check which regions in US we have these pollutants data for.  
+
+```{r map for entire data in US}
 # loading the required packages
 library(ggplot2)
 library(ggmap)
 
-# creating a sample data.frame with your lat/lon points
-# lon <- c(-38.31,-35.5)
-# lat <- c(40.96, 37.5)
-#df <- as.data.frame(cbind(lon,lat))
-
-mapgilbert <- get_map(location = c(lon = mean(eda1$longitude), lat = mean(eda1$latitude)), zoom = 4,
+map1 <- get_map(location = c(lon = mean(eda1$longitude), lat = mean(eda1$latitude)), zoom = 4,
                       maptype = "satellite", scale = 2)
 
+knitr::include_graphics('Documents/Projects/Air Quality/staticmap.png')
 
+ggmap(map1) +
+  geom_point(data = eda1, aes(x = longitude, y = latitude, fill = "red", alpha = 0.8), size = 5, shape = 21) +
+  guides(fill=FALSE, alpha=FALSE, size=FALSE)
 ```
-![Map Showing Pollutant Study.](Air Quality/staticmap.png)
+#[Map Showing Pollutant Study.](Air Quality/staticmap.png)
+
+
+Interestingly for the entire data sets looks like the pollutants data are collected from all over the US. 
+
+Let's try to check the regions covered in the year of 1987.
+
+```{r pollutants data covered from regions of US in 1987}
+map1987 <- get_map(location = c(lon = mean(eda1987$longitude), lat = mean(eda1987$latitude)), zoom = 4,
+                      maptype = "satellite", scale = 2)
+
+ggmap(map1987) +
+  geom_point(data = eda1987, aes(x = longitude, y = latitude, fill = "red", alpha = 0.8), size = 5, shape = 21) +
+  guides(fill=FALSE, alpha=FALSE, size=FALSE)
+```
+
+Let's try to see the same for the year of 2017.
+
+```{r pollutants data covered from Regions of US 2017}
+map2017 <- get_map(location = c(lon = mean(eda2017$longitude), lat = mean(eda2017$latitude)), zoom = 4,
+                      maptype = "satellite", scale = 2)
+
+ggmap(map2017) +
+  geom_point(data = eda2017, aes(x = longitude, y = latitude, fill = "red", alpha = 0.8), size = 5, shape = 21) +
+  guides(fill=FALSE, alpha=FALSE, size=FALSE)
+```
+
+Let's try to see the pollutant data in the state of Michigan, California, and Texas for 1987 and 2017. 
+
+```{r pollutants in some States for 1987 and 2017}
+eda2_States <- eda2 %>% filter(state_name == "Michigan" | state_name == "California" | state_name == "Texas" | state_name == "Alabama") %>% arrange(desc(arithmetic_mean)) 
+eda2 %>% filter(state_name == "Michigan" | state_name == "California" | state_name == "Texas" | state_name == "Alabama") %>% arrange(desc(arithmetic_mean)) 
+```
+
+Let's try to visualize the States with the highest mean pollutants distribution. 
+
+```{r States level pollution distribution}
+ggplot(data = eda1) + geom_histogram(aes(x = arithmetic_mean, binwidth = 30000, fill = state_name)) + scale_x_log10() 
+```
+
+Okay, from the Histogram distribution, it looks like, some of the States such as Alabama, Alaska, Arizona have a higher level concentration of pollutants that are captured across the datas in these span of 30 years. 
+
+
+Let's try to visualize the state wise distribution of the mean of the pollutants across the States of Michigan, Texas, California, and Alabama. 
+
+```{r histogram for states}
+ggplot(data = eda2_States) + geom_histogram(aes(x = arithmetic_mean, binwidth = 30000, fill = state_name)) + scale_x_log10()
+```
+
+
+```{r pollutants}
+library(plyr)
+
+# Pollutants across the Entire US for 30 years
+pollutants1 <- count(eda1, 'parameter_name')  %>% filter(freq > 2000)
+count(eda1, 'parameter_name')
+
+# Pollutants across the entire US for 1987
+pollutants1987 <- count(eda1987, 'parameter_name')  %>% filter(freq > 100)
+count(eda1987, 'parameter_name')
+
+# Pollutants across the entire US for 2017
+pollutants2017 <- count(eda2017, 'parameter_name')  %>% filter(freq > 100)
+count(eda2017, 'parameter_name')
+
+# Pollutants across the entire US for both 1987 & 2017
+pollutants2 <- count(eda2, 'parameter_name') %>% filter(freq > 100)
+count(eda2, 'parameter_name')
+
+
+# Let's freed some of our memory to optimize our workspace a little
+#rm(pollutants1, pollutants1987, pollutants2017, pollutants2)
+```
+
+
+
+```{r}
+ggplot(data = pollutants1) + geom_histogram(aes(x = freq, binwidth = 30000, fill = parameter_name)) + scale_x_log10()
+```
+
+```{r}
+ggplot(data = pollutants2) + geom_histogram(aes(x = freq, binwidth = 30000, fill = parameter_name)) + scale_x_log10()
+```
+
+```{r}
+ggplot(data = pollutants1987) + geom_histogram(aes(x = freq, binwidth = 30000, fill = parameter_name)) + scale_x_log10()
+```
+
+```{r}
+ggplot(data = pollutants2017) + geom_histogram(aes(x = freq, binwidth = 30000, fill = parameter_name)) + scale_x_log10()
+```
+
+```{r}
+ggplot(pollutants1, aes(x=freq)) + geom_density(fill = "plum", alpha = 0.90) + scale_x_log10()
+```
+
+
+```{r}
+ggplot(pollutants1, aes(x=freq, y=..density..)) + geom_histogram(fill="salmon", color="grey60", size=.2) + geom_density() + scale_x_log10()
+```
 
