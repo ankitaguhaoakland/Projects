@@ -1,0 +1,59 @@
+---
+title: "TriCountyEDA"
+author: "Kara Marsh"
+date: "April 16, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Tri County Analysis
+
+Our first step is to import the data into our environment. 
+```{r Reading in Data}
+eda <- read.table("cleaned2_AQ.csv", header = TRUE, sep = ",")
+```
+
+
+```{r}
+library(ggplot2)
+library(plyr)
+library(dplyr)
+
+
+
+```
+
+After importing the data, we will filter the data to only the information we need. 
+```{r}
+
+mi_eda <- eda %>% filter(state_name == "Michigan")
+macomb_eda <- mi_eda %>% filter(county_name == "Macomb")
+wayne_eda <- mi_eda %>% filter(county_name == "Wayne")
+oakland_eda <- mi_eda %>% filter(county_name == "Oakland")
+
+macomb_ozone <- macomb_eda %>% filter(parameter_name == 'Ozone')
+
+str(macomb_ozone)
+macomb_ozone$address <- as.factor(macomb_ozone$address)
+
+macomb_ozone %>% 
+ # filter(address == '57700 GRATIOT') %>% 
+  ggplot() + 
+  geom_point(aes(x = year, y = arithmetic_mean))+
+  facet_grid( ~ address)
+```
+
+
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
