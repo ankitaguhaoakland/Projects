@@ -333,5 +333,7 @@ rm(pollutants1, pollutants1987, pollutants2, pollutants2017, map1, map1987, map2
 
 + We tried to keep the zoom to a number so as to have an entire arial view of the observation Pollutants data so collected in the US map. 
 
++ In this study we viewed the pollutants distribution value across various regions in US based on the year of 1987 & 2017 in focussed mainly in the States of Alabama, California, Michigan, and Texas.
+
 
 
