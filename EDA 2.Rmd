@@ -1,0 +1,39 @@
+---
+title: "EDA 2"
+output: html_document
+Authors: AKJ
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+***Proposition 2***
+We would like to map the major pollutants so identified to the Regions in the US in the States of Alabama, California, Michigan and Texas in the year of 1987 and 2017. 
+
+
+**Data Preparation**
+To meet the purpose of Proposition 2, let's try to scoop out some of the chunk of datas that we already used in our EDA 1.Rmd File. And then let's try to free some of the memory for the data frame which we aren't using. 
+
+```{r reading cleaned dataframe}
+eda <- read.table("eda2_States.csv", header = TRUE, sep = ",")
+
+
+# Dataframe ready for analysis
+eda1 <- subset(eda, select = c(latitude, longitude, parameter_name, method_name, year, arithmetic_mean, arithmetic_standard_dev, state_name))
+rm(eda)
+```
+
+Load some of the library packages that might be necessary for this analysis
+```{r}
+library(ggplot2)
+library(ggmap)
+library(mapdata)
+library(maps)
+library(stringr)
+library(viridis)
+```
+
+
+
+
