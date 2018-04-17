@@ -306,7 +306,18 @@ count(eda2, 'parameter_name')
 ggplot(data = pollutants2) + geom_histogram(aes(x = freq, binwidth = 300000, fill = parameter_name)) + scale_x_log10()
 ```
 
+Not a great visual, but we have an idea which Pollutants are kind of topping the datasets. 
+
 Some of the top contributing Pollutants that are apparently present in the entire datasets for both the year of 1987 & 2017 are Arsenic,Cadmium, Carbon Monoxide, along with some other Pollutants such as Suspended Particulate (TSP), Sulfur Dioxide etc.  
+
+Let's reuse some of the dataframes for our next level of analysis
+```{r}
+write.csv(eda1, file = "eda1.csv")
+write.csv(eda1987, file = "eda1987.csv")
+write.csv(eda2017, file = "eda2017.csv")
+write.csv(eda2, file = "eda2.csv")
+write.csv(eda2_States, file = "eda2_States.csv")
+```
 
 
 Let's try to free some of the used spaces for better use with our memory and for being able to fit other EDA's conviniently.
@@ -315,6 +326,12 @@ rm(pollutants1, pollutants1987, pollutants2, pollutants2017, map1, map1987, map2
 ```
 
 
+**Conclusion**
++ Due to the huge nature of the datasets, some of the Map might get stuck when the entire RMD File is run as a whole. However if that code chunk is run independently after a little delay, it runs successfully showing the Map Data of the Pollutants so collected.
+
++ The zoom function so used in the code snippets for the Maps, can be increased or decreased (by changing the number) to focus into the areas from where the data has been collected. 
+
++ We tried to keep the zoom to a number so as to have an entire arial view of the observation Pollutants data so collected in the US map. 
 
 
 
