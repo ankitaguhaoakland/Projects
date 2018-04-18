@@ -9,7 +9,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ***Proposition 2***
-We would like to map the major pollutants so identified to the Regions in the US in the States of Alabama, California, Michigan and Texas in the year of 1987 and 2017. 
+We would like to map the major pollutants so identified to the Regions in the US in the States of Alabama, California, Michigan and Texas in the year of 1987 and 2017 as we did in our last EDA. 
 
 
 **Data Preparation**
@@ -17,7 +17,6 @@ To meet the purpose of Proposition 2, let's try to scoop out some of the chunk o
 
 ```{r reading cleaned dataframe}
 eda <- read.table("eda2_States.csv", header = TRUE, sep = ",")
-
 
 # Dataframe ready for analysis
 eda1 <- subset(eda, select = c(latitude, longitude, parameter_name, method_name, year, arithmetic_mean, arithmetic_standard_dev, state_name))
@@ -32,8 +31,20 @@ library(mapdata)
 library(maps)
 library(stringr)
 library(viridis)
+library(dplyr)
+library(plyr)
 ```
+Let's try to map out the Pollutants distribution in the 4 States of our interest as seen in the data sets from the year of 1987 and 2017.
+```{r}
+# Pollutants distribution across the 4 States in US for both 1987 & 2017
+pollutants <- count(eda1, 'parameter_name') %>% filter(freq > 300)  filter(state_name == "Michigan" | state_name == "California" | state_name == "Texas" | state_name == "Alabama")
+count(eda1, 'parameter_name')
 
+map1 <- get_map(location = c(lon = mean(eda1$longitude), lat = mean(eda1$latitude)), zoom = 4,
+                      maptype = "satellite", scale = 2)
 
+ggmap(map1) +
+  geom_point(data = eda1, aes(x = longitude, y = latitude, colour = "state_name", fill = "red", alpha = 0.8), size = 5, shape = 21) + guides(fill=FALSE, alpha=FALSE, size=FALSE)
+```
 
 
