@@ -1,7 +1,7 @@
 ---
 title: "EDA 1"
 output: html_document
-Authors: AKJ
+Authors: "AKJ"
 ---
 
 ```{r setup, include=FALSE}
@@ -202,13 +202,12 @@ Let's try to check which regions in US we have these pollutants data for.
 map1 <- get_map(location = c(lon = mean(eda1$longitude), lat = mean(eda1$latitude)), zoom = 4,
                       maptype = "satellite", scale = 2)
 
-knitr::include_graphics('Documents/Projects/Air Quality/staticmap.png')
+#knitr::include_graphics('Documents/Projects/AirQuality/staticmap.png')
 
 ggmap(map1) +
   geom_point(data = eda1, aes(x = longitude, y = latitude, fill = "red", alpha = 0.8), size = 5, shape = 21) +
   guides(fill=FALSE, alpha=FALSE, size=FALSE)
 ```
-#[Map Showing Pollutant Study.](Air Quality/staticmap.png)
 
 
 Interestingly for the entire data sets looks like the pollutants data are collected from all over the US. 
@@ -263,26 +262,37 @@ Due to the wide variety of Pollutants as seen in the dataframe, we tried here to
 
 ```{r pollutants across Entire US for 30 years}
 library(plyr)
+library(RColorBrewer)
 
 # Pollutants across the Entire US for 30 years
-pollutants1 <- count(eda1, 'parameter_name')  %>% filter(freq > 3000)
+pollutants1 <- count(eda1, 'parameter_name')  %>% filter(freq > 5000)
 count(eda1, 'parameter_name')
 # Histogram
-ggplot(data = pollutants1) + geom_histogram(aes(x = freq, binwidth = 30000, fill = parameter_name)) + scale_x_log10()
+colourCount = length(unique(pollutants1$parameter_name))
+ggplot(pollutants1, aes(x = reorder(parameter_name,freq), freq, fill = parameter_name)) +
+   geom_bar(stat = "identity", position = "dodge") +
+   scale_fill_manual(values = colorRampPalette(brewer.pal(12, "Accent"))(colourCount)) +
+   scale_y_continuous(labels = scales::comma) + 
+   coord_flip()
 # Density Plot
 ggplot(pollutants1, aes(x=freq)) + geom_density(fill = "paleturquoise", alpha = 0.90) + scale_x_log10()
 # Density Overlaid on Histogram
 ggplot(pollutants1, aes(x=freq, y=..density..)) + geom_histogram(fill="turquoise", color="grey60", size=.2) + geom_density() + scale_x_log10()
 ```
-Looks like some of the top Pollutants in the entire datasets are Benzene, Carbon monoxide, Lead, NO2, NO etc along with Ambient Max and Min Temperature, Wind Speed etc captured in that particular day when the pollutant data was calculated.
+Looks like Ozone is one of the top Pollutants, apart from Sulphur dioxide, Suspended particulate (TSP) etc along with PM2.5 - Local Conditions, PM10 Total 0-10um STP. Wind Speed, Outdoor Temperature etc are also seen to be captured in that particular day when the pollutant data was measured. This kind of gives an overview of the maximum contributing Pollutant contributors in the entire US so collected over a span of 30 years. 
 
 Let's next look into the Pollutants count across US in the year of 1987.   
 ```{r pollutants across Entire US for 1987}
 # Pollutants across the entire US for 1987
 pollutants1987 <- count(eda1987, 'parameter_name')  %>% filter(freq > 100)
 count(eda1987, 'parameter_name')
+
 # Visualization
-ggplot(data = pollutants1987) + geom_histogram(aes(x = freq, binwidth = 300000, fill = parameter_name)) + scale_x_log10()
+ggplot(pollutants1987, aes(x = reorder(parameter_name,freq), freq, fill = parameter_name)) +
+   geom_bar(stat = "identity", position = "dodge") +
+   scale_fill_brewer(palette = "Set1") + 
+   scale_y_continuous(labels = scales::comma) + 
+   coord_flip()
 ```
 
 Looks like Carbon Monooxide, Nitrogen Dioxide, and Nickel are the main top contributing Pollutants in US in the year of 1987.
@@ -290,25 +300,32 @@ Looks like Carbon Monooxide, Nitrogen Dioxide, and Nickel are the main top contr
 Let's peep into our Pollutants data from the year of 2017 in the US. 
 ```{r pollutants across Entire US for 2017}
 # Pollutants across the entire US for 2017
-pollutants2017 <- count(eda2017, 'parameter_name')  %>% filter(freq > 100)
+pollutants2017 <- count(eda2017, 'parameter_name')  %>% filter(freq > 200)
 count(eda2017, 'parameter_name')
+
 # Visualization
-ggplot(data = pollutants2017) + geom_histogram(aes(x = freq, binwidth = 300000, fill = parameter_name)) + scale_x_log10()
+ggplot(pollutants2017, aes(x = reorder(parameter_name,freq), freq, fill = parameter_name)) +
+   geom_bar(stat = "identity", position = "dodge") +
+   scale_fill_brewer(palette = "Set2") + 
+   scale_y_continuous(labels = scales::comma) + 
+   coord_flip()
 ```
 
 Nitric Oxide, Carbon Monoxide, and Nitrogen Dioxide are some of the top Pollutants that are noted in US in the year of 2017.  
 Let's try to look at the Pollutants data in the entire year for both 1987 and 2017.
 ```{r pollutants across Entire US for 1987 & 2017}
 # Pollutants across the entire US for both 1987 & 2017
-pollutants2 <- count(eda2, 'parameter_name') %>% filter(freq > 100)
+pollutants2 <- count(eda2, 'parameter_name') %>% filter(freq > 400)
 count(eda2, 'parameter_name')
 # Visualization
-ggplot(data = pollutants2) + geom_histogram(aes(x = freq, binwidth = 300000, fill = parameter_name)) + scale_x_log10()
+ggplot(pollutants2, aes(x = reorder(parameter_name,freq), freq, fill = parameter_name)) +
+   geom_bar(stat = "identity", position = "dodge") +
+   scale_fill_brewer(palette = "Set2") + 
+   scale_y_continuous(labels = scales::comma) + 
+   coord_flip()
 ```
 
-Not a great visual, but we have an idea which Pollutants are kind of topping the datasets. 
-
-Some of the top contributing Pollutants that are apparently present in the entire datasets for both the year of 1987 & 2017 are Arsenic,Cadmium, Carbon Monoxide, along with some other Pollutants such as Suspended Particulate (TSP), Sulfur Dioxide etc.  
+Some of the top contributing Pollutants that are apparently present in the entire datasets for both the year of 1987 & 2017 are Ozone, Sulphur dioxide, Suspended particulate (TSP) along with some other variables such as PM2.5 - Local Conditions, PM10 Total 0-10um STP.  
 
 Let's reuse some of the dataframes for our next level of analysis
 ```{r}
@@ -327,13 +344,12 @@ rm(pollutants1, pollutants1987, pollutants2, pollutants2017, map1, map1987, map2
 
 
 **Conclusion**
-+ Due to the huge nature of the datasets, some of the Map might get stuck when the entire RMD File is run as a whole. However if that code chunk is run independently after a little delay, it runs successfully showing the Map Data of the Pollutants so collected.
 
-+ The zoom function so used in the code snippets for the Maps, can be increased or decreased (by changing the number) to focus into the areas from where the data has been collected. 
-
-+ We tried to keep the zoom to a number so as to have an entire arial view of the observation Pollutants data so collected in the US map. 
++ It is interesting to note that the Pollutants data so collected are not in the same units of measurement, so Normalization would have produced much optimized exploratory data analysis. But that would require much more in-depth subject matter expertise & time so that could form a future study itself. 
 
 + In this study we viewed the pollutants distribution value across various regions in US based on the year of 1987 & 2017 in focussed mainly in the States of Alabama, California, Michigan, and Texas.
+
+
 
 
 
