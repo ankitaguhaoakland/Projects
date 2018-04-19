@@ -295,7 +295,7 @@ ggplot(pollutants1987, aes(x = reorder(parameter_name,freq), freq, fill = parame
    coord_flip()
 ```
 
-Looks like Carbon Monooxide, Nitrogen Dioxide, and Nickel are the main top contributing Pollutants in US in the year of 1987.
+Looks like Sulfur dioxide, Ozone, Suspended particulate, Carbon Monooxide are the main top contributing Pollutants in US for the year of 1987.
 
 Let's peep into our Pollutants data from the year of 2017 in the US. 
 ```{r pollutants across Entire US for 2017}
@@ -310,8 +310,8 @@ ggplot(pollutants2017, aes(x = reorder(parameter_name,freq), freq, fill = parame
    scale_y_continuous(labels = scales::comma) + 
    coord_flip()
 ```
+Ozone, Sulfur dioxide along with PM10 Total 0-10um STP, PM2.5- Local Conditions are some of the top Pollutants that are noted in US in the year of 2017.  
 
-Nitric Oxide, Carbon Monoxide, and Nitrogen Dioxide are some of the top Pollutants that are noted in US in the year of 2017.  
 Let's try to look at the Pollutants data in the entire year for both 1987 and 2017.
 ```{r pollutants across Entire US for 1987 & 2017}
 # Pollutants across the entire US for both 1987 & 2017
@@ -324,8 +324,19 @@ ggplot(pollutants2, aes(x = reorder(parameter_name,freq), freq, fill = parameter
    scale_y_continuous(labels = scales::comma) + 
    coord_flip()
 ```
-
 Some of the top contributing Pollutants that are apparently present in the entire datasets for both the year of 1987 & 2017 are Ozone, Sulphur dioxide, Suspended particulate (TSP) along with some other variables such as PM2.5 - Local Conditions, PM10 Total 0-10um STP.  
+
+Let's try to map it out in terms of the location in US Map. 
+
+```{r US Map Pollutants Mapping in Terms of 4 States AND in both 1987 & 2017}
+map4 <- get_map(location = c(lon = mean(eda2_States$longitude), lat = mean(eda2_States$latitude)), zoom = 4,
+                      maptype = "satellite", scale = 2)
+
+ggmap(map4) +
+  geom_point(data = eda2_States, aes(x = longitude, y = latitude, colour = state_name, alpha = 0.7), size = 5, shape = 21) + guides(fill=FALSE, alpha=FALSE, size=TRUE)
+```
+Okay, so looks like we now have identified the Pollutant that have mostly contributed to the data sets in the state of Alabama, Calfornia, Michigan, and Texas in the year of both 1987 and 2017. As seen from the Map as well from the dataframe filtering we can conclude that **Ozone** is the top Pollutant contributor in these 4 States. 
+
 
 Let's reuse some of the dataframes for our next level of analysis
 ```{r}
@@ -339,7 +350,7 @@ write.csv(eda2_States, file = "eda2_States.csv")
 
 Let's try to free some of the used spaces for better use with our memory and for being able to fit other EDA's conviniently.
 ```{r clear memory space}
-rm(pollutants1, pollutants1987, pollutants2, pollutants2017, map1, map1987, map2017, eda2_States, eda1)
+rm(pollutants1, pollutants1987, pollutants2, pollutants2017, map1, map1987, map2017, eda2_States, eda1, map4)
 ```
 
 
