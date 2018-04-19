@@ -9,6 +9,11 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r libraries}
+library(ggplot2)
+library(plyr)
+library(dplyr)
+```
 ## Tri County Analysis
 
 Our first step is to import the data into our environment. 
@@ -16,44 +21,84 @@ Our first step is to import the data into our environment.
 eda <- read.table("cleaned2_AQ.csv", header = TRUE, sep = ",")
 ```
 
+After importing the data, we filter only the values measuring Ozone, and then 
+we find the mean of the arithmetic_mean values. From there, we normalize the 
+arithmetic_means.
+```{r Ozone filter and normalization}
+eda_ozone <- eda %>% filter(parameter_name == 'Ozone')
+avg_mean <- mean(eda_ozone$arithmetic_mean)
+eda_ozone$norm_mean <- eda_ozone$arithmetic_mean/avg_mean
+```
 
+To narrow our analysis, we filter first by state and then find the counties 
+which have the greatest number of data points.   
+```{r State and County Filters}
+mi_ozone <- eda_ozone %>% 
+  filter(state_name == "Michigan")
+
+list <- mi_ozone %>% 
+  group_by(county_name) %>% 
+  summarize(n = n()) %>% 
+  arrange(desc(n)) 
+```
+We create another data frame that just has the three counties with the greatest
+number of data points.
 ```{r}
-library(ggplot2)
-library(plyr)
-library(dplyr)
-
-
-
+tricounty_ozone <- mi_ozone %>% 
+  filter(county_name == list$county_name[1] | 
+           county_name == list$county_name[2] | 
+           county_name == list$county_name[3])
 ```
 
-After importing the data, we will filter the data to only the information we need. 
+A basic plot of means over time does not show any useful correlation. 
+```{r Plotting Means by Year}
+tricounty_ozone %>%
+  ggplot() +
+  geom_point(aes(x = year, y = norm_mean))  
+```
+Color coding the values by county also does not let us see any correlation.
 ```{r}
+tricounty_ozone %>%
+  ggplot() +
+  geom_point(aes(x = year, y = norm_mean, color = county_name))  
+```
+In the next graph, we color code the metric used to see if that pulls out any 
+difference. 
+```{r}
+tricounty_ozone %>%
+  ggplot() +
+  geom_point(aes(x = year, y = norm_mean, color = metric_used))  
+```
+Metric used does seem to correlate to different types of data. Specifically the
+red was associated with the daily maxima rather than the daily maximum of an 
+average. We will remove the daily maxima from our evalation. 
+```{r}
+odd_metric = "Daily maxima of observed hourly values (between 9:00 AM and 8:00 PM)"
 
-mi_eda <- eda %>% filter(state_name == "Michigan")
-macomb_eda <- mi_eda %>% filter(county_name == "Macomb")
-wayne_eda <- mi_eda %>% filter(county_name == "Wayne")
-oakland_eda <- mi_eda %>% filter(county_name == "Oakland")
+tricounty_ozone %>%
+  filter(metric_used != odd_metric) %>%
+  ggplot() +
+  geom_point(aes(x = year, y = norm_mean, color = metric_used))  
 
-macomb_ozone <- macomb_eda %>% filter(parameter_name == 'Ozone')
+```
+Since those values blend together, we will assume they are roughly equivalent. 
+```{r}
+tricounty_ozone %>%
+  filter(metric_used != odd_metric) %>%
+  ggplot() +
+  geom_point(aes(x = year, y = norm_mean, color = county_name))  
+```
 
-str(macomb_ozone)
-macomb_ozone$address <- as.factor(macomb_ozone$address)
+It appears in the graph above that there are multiple values for one county 
+in the same year. 
+```{r}
+tricounty_ozone %>%
+  filter(metric_used != odd_metric) %>%
+  ggplot() +
+  geom_point(aes(x = year, y = norm_mean, color = address)) +
+  facet_wrap( ~ county_name)
 
-macomb_ozone %>% 
- # filter(address == '57700 GRATIOT') %>% 
-  ggplot() + 
-  geom_point(aes(x = year, y = arithmetic_mean))+
-  facet_grid( ~ address)
 ```
 
 
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
