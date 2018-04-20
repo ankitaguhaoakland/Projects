@@ -1,0 +1,371 @@
+---
+title: "Predictive Regression Modeling on For Ozone in MI and in US"
+output: html_document
+Author: "AKJ"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+**Data Preparation**
+```{r}
+aqAll <- read.table("eda_ozone.csv", header = TRUE, sep = ",")
+aqAll$X.1 <- aqAll$X <-NULL
+aqMI <- read.table("mi_ozone.csv", header = TRUE, sep = ",")
+aqMI$X.1 <- aqMI$X <- aqMI$exceptional_data_count <- NULL
+#aqMI$method_name <- sub("^$", "Unknown", aqMI$method_name)
+
+# levels <- levels(aqMI$method_name)
+# levels[length(levels) + 1] <- "Unknown"
+# aqMI$method_name <- factor(aqMI$method_name, levels = levels)
+# aqMI$method_name[is.na(aqMI$method_name)] <- "Unknown"
+
+# levels(method_name)<-c(levels(method_name),"None")  #Add the extra level to your factor
+# aqMI[is.na(aqMI)] <- "Unknown" 
+
+#load('AirQuality.RData')
+```
+
+**Partition Data into Training & Test Data Sets for MI**
+```{r}
+set.seed(828)
+sample_size <- ceiling(0.30 * nrow(aqMI))
+testrecs <- sample(nrow(aqMI),sample_size)
+MI_test <- aqMI[testrecs,]
+MI_train <- aqMI[-testrecs,]  # Negative in front of vector means "not in"
+rm(aqMI) # No sense keeping a copy of the entire dataset around
+```
+
+
+**Partition Data into Training & Test Data Sets for US**
+```{r}
+set.seed(828)
+sample_size <- ceiling(0.30 * nrow(aqAll))
+testrecs <- sample(nrow(aqAll),sample_size)
+All_test <- aqAll[testrecs,]
+All_train <- aqAll[-testrecs,]  # Negative in front of vector means "not in"
+rm(aqAll) # No sense keeping a copy of the entire dataset around
+
+```
+
+
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(coefplot)
+library(reshape2)
+library(scales)
+library(boot)
+```
+
+**MI Prediction**
+```{r Histogram of MI Train Data }
+ggplot(data = MI_train) + geom_histogram(aes(x = arithmetic_mean), fill = "steelblue", colour="Black")
+```
+
+```{r Histogram of MI Train Data 95 percentile}
+ggplot(data = MI_train) + geom_histogram(aes(x = ninety_five_percentile), fill = "orange", colour="Black")
+```
+
+```{r}
+ggplot(data = MI_train) + geom_histogram(aes(x = arithmetic_standard_dev), fill = "lightpink", colour="Black")
+```
+
+
+```{r histo of first_max_value}
+ggplot(data = MI_train) + geom_histogram(aes(x = first_max_value), fill = "violet", colour="Black")
+```
+
+
+```{r scatterplot of mean & std dev}
+ggplot(data = MI_train) + geom_point(aes(y = arithmetic_mean, x = arithmetic_standard_dev)) 
+```
+
+```{r scatterplot of mean & 1st max value}
+ggplot(data = MI_train) + geom_point(aes(y = arithmetic_mean, x = first_max_value))
+```
+
+```{r}
+ggplot(data = MI_train) + geom_point(aes(y = arithmetic_mean, x = ninety_five_percentile))
+```
+
+
+
+```{r}
+ggplot(data = MI_train) + geom_point(aes(y = arithmetic_mean, x = year))
+```
+
+
+```{r}
+# Scatterplots of Total_Charges vs Total_Costs faceted along Payment_Typology_1
+ggplot(data = MI_train) + geom_point(aes(y = arithmetic_mean, x = first_max_value)) + 
+  facet_wrap(~county_name)
+```
+
+```{r}
+ggplot(data = MI_train) + geom_point(aes(y = arithmetic_mean, x = arithmetic_standard_dev)) + 
+  facet_wrap(~year)
+```
+
+```{r}
+ggplot(data = MI_train) + geom_point(aes(y = arithmetic_mean, x = arithmetic_standard_dev, col = metric_used)) + 
+  facet_wrap(~metric_used)
+```
+
+```{r}
+ggplot(data = MI_train) + geom_point(aes(y = arithmetic_mean, x = arithmetic_standard_dev, col = method_name)) + 
+  facet_wrap(~method_name)
+```
+
+****Linear Regression Model for Ozone Data for MI****
+```{r}
+meanMI_lm0 <- lm(arithmetic_mean ~ 1, data = MI_train)
+summary(meanMI_lm0)
+# Compute the MAD value
+median(abs(meanMI_lm0$residuals))
+```
+
+```{r}
+head(MI_train)
+str(MI_train)
+```
+
+
+```{r}
+cor(MI_train$arithmetic_mean, MI_train$arithmetic_standard_dev)
+```
+
+```{r}
+cor(MI_train$arithmetic_mean, MI_train$first_max_value)
+cor(MI_train$arithmetic_mean, MI_train$second_max_value)
+cor(MI_train$arithmetic_mean, MI_train$third_max_value)
+cor(MI_train$arithmetic_mean, MI_train$fourth_max_value)
+cor(MI_train$arithmetic_mean, MI_train$ninety_five_percentile)
+```
+
+**Correlation Matrix**
+```{r}
+correlationbuild1 <- MI_train %>%
+  select(county_name, first_max_value, arithmetic_mean, arithmetic_standard_dev, ninety_five_percentile)
+
+head(correlationbuild1)
+```
+
+
+```{r}
+cor(correlationbuild1[, c(2, 3:5)])
+```
+
+```{r}
+# Putting the Correlation Matrix in a Dataframe
+MItraincor <- cor(correlationbuild1[, c(2, 3:5)])
+
+# Melting the Data for ease of plotting
+correlationbuild1Melt <- melt(MItraincor, varnames=c("x", "y"), value.name = "Correlation")
+
+# Ordering the Correlation According to their Value
+correlationbuild1Melt <- correlationbuild1Melt[order(correlationbuild1Melt$Correlation), ]
+
+# Display the Melted Data
+correlationbuild1Melt
+```
+
+
+```{r}
+# Heatmap of Correlation For Numerical Predictors
+ggplot(correlationbuild1Melt, aes(x=x, y=y)) + geom_tile(aes(fill=Correlation)) + scale_fill_gradient2(low = muted("yellow"), mid = "white", high = "plum", guide = guide_colorbar(ticks = FALSE, barheight = 10), limits=c(-1, 1)) + theme_minimal() + labs(x=NULL, y = NULL)
+```
+
+**Model 1**
+```{r}
+# Model 1: Build to Understand the effect of the Predictors on the Response Variable 
+mean1 <- lm(arithmetic_mean ~ method_name + year + observation_count + observation_percent + valid_day_count + required_day_count + arithmetic_standard_dev + first_max_value + second_max_value + third_max_value + fourth_max_value + ninety_nine_percentile + ninety_eight_percentile + ninety_five_percentile + ninety_percentile + seventy_five_percentile + fifty_percentile + ten_percentile + date_of_last_change + norm_mean, data = MI_train)
+
+summary(mean1)
+```
+
+Okay, so looks like our data is really Normalized as we have a R-Square of exactly 1 with a significant low p value. 
+```{r}
+# Compute the MAD value
+median(abs(mean1$residuals))
+```
+
+```{r}
+mean1$coefficients
+```
+
+Let's try to visualize the Model 
+```{r}
+ggplot(mean1, aes(x=.resid)) + geom_histogram() 
+```
+
+```{r}
+# Residual Analysis by norm_mean
+ggplot(data=mean1, aes(x=.fitted, y = .resid)) + geom_point(aes(color=norm_mean)) + labs(x="Fitted Values", y="Residuals")
+
+# Residual Analysis by method_name
+ggplot(data=mean1, aes(x=.fitted, y = .resid)) + geom_point(aes(color=first_max_value)) + labs(x="Fitted Values", y="Residuals")
+```
+
+```{r}
+# Making Prediction with Test Data and 95% Confidence Interval
+meanPredict1 <- predict(mean1, newdata=MI_test, se.fit=TRUE,
+                         interval="prediction", level=0.95)
+```
+
+**MAD Value for Prediction**
+```{r}
+df1 <- abs(meanPredict1$fit[,1]-MI_test["arithmetic_mean"])
+(testMad1 <- median(as.numeric(df1$arithmetic_mean)))
+```
+
+Let's clean up some of our memory space for next iteration of analysis.
+
+```{r}
+rm(aqMI, MI_test, MI_train, df1, MItraincor, correlationbuild1, correlationbuild1Melt, mean1, meanMI_lm0, meanPredict1)
+```
+
+
+**Conclusion**
+
++ Our Model is significant with an accurate R Squared Value of 1! (Rare Case No Doubt!). 
+
++ So our MAD for the Test Data in MI with Ozone as the major contributing Pollutant looks little smaller in case of Test Data as compared to that of the Train Data, indicating an underfitting Model. 
+
++ But overall Model performance was good mainly due to the data that we have essentially choosen to build and Predict the Model.  
+
++ Since, our first Model itself was a good fit hence we did not venture out to Fit more Model along this data frame. It definitely has a lot of scope to do a lot more study with this dataframe. But due to our limited Project Scope, we are unable to explore more. 
+
+**US Prediction**
+```{r}
+ggplot(data = All_train) + geom_histogram(aes(x = arithmetic_mean), fill = "steelblue", colour="Black")
+```
+
+```{r}
+ggplot(data = All_train) + geom_histogram(aes(x = ninety_five_percentile), fill = "orange", colour="Black")
+ggplot(data = All_train) + geom_histogram(aes(x = arithmetic_standard_dev), fill = "lightpink", colour="Black")
+ggplot(data = All_train) + geom_histogram(aes(x = first_max_value), fill = "violet", colour="Black")
+ggplot(data = All_train) + geom_point(aes(y = arithmetic_mean, x = arithmetic_standard_dev)) 
+ggplot(data = All_train) + geom_point(aes(y = arithmetic_mean, x = first_max_value))
+ggplot(data = All_train) + geom_point(aes(y = arithmetic_mean, x = ninety_five_percentile))
+ggplot(data = All_train) + geom_point(aes(y = arithmetic_mean, x = year))
+ggplot(data = All_train) + geom_point(aes(y = arithmetic_mean, x = arithmetic_standard_dev, col = metric_used)) + 
+  facet_wrap(~metric_used)
+ggplot(data = All_train) + geom_point(aes(y = arithmetic_mean, x = arithmetic_standard_dev, col = method_name)) + 
+  facet_wrap(~method_name)
+```
+
+**Linear Regression Model for Ozone Data for US**
+```{r}
+meanAll_lm0 <- lm(arithmetic_mean ~ 1, data = All_train)
+summary(meanAll_lm0)
+# Compute the MAD value
+median(abs(meanAll_lm0$residuals))
+```
+
+```{r}
+cor(All_train$arithmetic_mean, All_train$arithmetic_standard_dev)
+```
+
+```{r}
+cor(All_train$arithmetic_mean, All_train$first_max_value)
+cor(All_train$arithmetic_mean, All_train$second_max_value)
+cor(All_train$arithmetic_mean, All_train$third_max_value)
+cor(All_train$arithmetic_mean, All_train$fourth_max_value)
+cor(All_train$arithmetic_mean, All_train$ninety_five_percentile)
+```
+
+**Correlation Matrix**
+```{r}
+correlationbuild2 <- All_train %>%
+  select(county_name, first_max_value, arithmetic_mean, arithmetic_standard_dev, ninety_five_percentile)
+
+head(correlationbuild2)
+```
+
+```{r}
+cor(correlationbuild2[, c(2, 3:5)])
+```
+
+```{r}
+# Putting the Correlation Matrix in a Dataframe
+Alltraincor <- cor(correlationbuild2[, c(2, 3:5)])
+
+# Melting the Data for ease of plotting
+correlationbuild2Melt <- melt(Alltraincor, varnames=c("x", "y"), value.name = "Correlation")
+
+# Ordering the Correlation According to their Value
+correlationbuild2Melt <- correlationbuild2Melt[order(correlationbuild2Melt$Correlation), ]
+
+# Display the Melted Data
+correlationbuild2Melt
+```
+
+```{r}
+# Heatmap of Correlation For Numerical Predictors
+ggplot(correlationbuild2Melt, aes(x=x, y=y)) + geom_tile(aes(fill=Correlation)) + scale_fill_gradient2(low = muted("red"), mid = "white", high = "plum", guide = guide_colorbar(ticks = FALSE, barheight = 10), limits=c(-1, 1)) + theme_minimal() + labs(x=NULL, y = NULL)
+```
+
+```{r}
+# Model 1: Build to Understand the effect of the Predictors on the Response Variable 
+mean1 <- lm(arithmetic_mean ~  year + observation_count + observation_percent + valid_day_count + required_day_count + arithmetic_standard_dev + first_max_value + second_max_value + third_max_value + fourth_max_value + ninety_nine_percentile + ninety_eight_percentile + ninety_five_percentile + ninety_percentile + seventy_five_percentile + fifty_percentile + ten_percentile + norm_mean + state_name, data = All_train)
+
+summary(mean1)
+```
+
+
+```{r}
+# Compute the MAD value
+median(abs(mean1$residuals))
+```
+
+```{r}
+mean1$coefficients
+```
+
+```{r}
+ggplot(mean1, aes(x=.resid)) + geom_histogram() + scale_x_log10()
+
+#ggplot(totalCharges13, aes(x=.resid, binwidth=30000)) + geom_histogram() + scale_x_log10()
+```
+
+```{r}
+# Residual Analysis by state_name
+ggplot(data=mean1, aes(x=.fitted, y = .resid)) + geom_point(aes(color=state_name)) + labs(x="Fitted Values", y="Residuals")
+
+# Residual Analysis by first_max_value
+ggplot(data=mean1, aes(x=.fitted, y = .resid)) + geom_point(aes(color=first_max_value)) + labs(x="Fitted Values", y="Residuals")
+```
+
+```{r}
+# Making Prediction with Test Data and 95% Confidence Interval
+meanPredict1 <- predict(mean1, newdata=All_test, se.fit=TRUE,
+                         interval="prediction", level=0.95)
+```
+
+**MAD Value for Prediction**
+```{r}
+df1 <- abs(meanPredict1$fit[,1]-All_test["arithmetic_mean"])
+(testMad1 <- median(as.numeric(df1$arithmetic_mean)))
+```
+
+Let's clear our dataframe now
+
+```{r}
+rm(All_test, All_train, correlationbuild2, correlationbuild2Melt, correlationbuild1, df1, mean1, meanAll_lm0, meanPredict1)
+```
+
+
+**Conclusion**
+
++ The MAD value for the Test seems to be at a little higher side than the Train Data for the entire US data with Ozone as the main contributing pollutant. 
+
++ Our Model is again significant with an accurate R Squared Value of 1! So for obvious reason it is not difficult to get that ideal R Square Value. 
+
++ But overall Model performance was good mainly due to the data that we have essentially choosen to build and Predict the Model.  
+
++ Since, our first Model itself was a good fit hence we did not venture out to Fit more Model along this data frame. It definitely has a lot of scope to do a lot more study with this dataframe. But due to our limited Project Scope, we are unable to explore more. 
+
+
