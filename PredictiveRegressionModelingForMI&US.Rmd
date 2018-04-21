@@ -1,5 +1,5 @@
 ---
-title: "Predictive Regression Modeling on For Ozone in MI and in US"
+title: "Predictive Regression Modeling For Ozone in MI and in US"
 output: html_document
 Author: "AKJ"
 ---
@@ -50,7 +50,7 @@ rm(aqAll) # No sense keeping a copy of the entire dataset around
 ```
 
 
-
+Loading the necessary libraries
 ```{r}
 library(dplyr)
 library(ggplot2)
@@ -120,12 +120,36 @@ ggplot(data = MI_train) + geom_point(aes(y = arithmetic_mean, x = arithmetic_sta
 ```
 
 ****Linear Regression Model for Ozone Data for MI****
+**Model 0 for MI**
 ```{r}
 meanMI_lm0 <- lm(arithmetic_mean ~ 1, data = MI_train)
 summary(meanMI_lm0)
 # Compute the MAD value
 median(abs(meanMI_lm0$residuals))
 ```
+So we got a pretty low MAD value which is like kind of perfect!
+
+Let's visualize the Residuals.
+```{r}
+ggplot(meanMI_lm0, aes(x=.resid)) + geom_histogram() 
+```
+
+Prediction at 95% confidence interval
+```{r}
+meanMIPredict0 <- predict(meanMI_lm0, newdata=MI_test, se.fit=TRUE,
+                         interval="prediction", level=0.95)
+```
+
+**MAD Value for Prediction**
+```{r}
+df0 <- abs(meanMIPredict0$fit[,1]-MI_test["arithmetic_mean"])
+(testMad0 <- median(as.numeric(df0$arithmetic_mean)))
+```
+
+**Findings**
+So, our MAD value for Test Data: 0.003643001 
+        MAD value for Train Data: 0.003508
+Although MAD for Test Data is little more than that of the Train Data, but we can almost say that we are 95% confident that our Model0 has an almost perfect fit.       
 
 ```{r}
 head(MI_train)
@@ -211,32 +235,31 @@ ggplot(data=mean1, aes(x=.fitted, y = .resid)) + geom_point(aes(color=first_max_
 
 ```{r}
 # Making Prediction with Test Data and 95% Confidence Interval
-meanPredict1 <- predict(mean1, newdata=MI_test, se.fit=TRUE,
+meanMIPredict1 <- predict(mean1, newdata=MI_test, se.fit=TRUE,
                          interval="prediction", level=0.95)
 ```
 
 **MAD Value for Prediction**
 ```{r}
-df1 <- abs(meanPredict1$fit[,1]-MI_test["arithmetic_mean"])
+df1 <- abs(meanMIPredict1$fit[,1]-MI_test["arithmetic_mean"])
 (testMad1 <- median(as.numeric(df1$arithmetic_mean)))
 ```
 
 Let's clean up some of our memory space for next iteration of analysis.
 
 ```{r}
-rm(aqMI, MI_test, MI_train, df1, MItraincor, correlationbuild1, correlationbuild1Melt, mean1, meanMI_lm0, meanPredict1)
+rm(MI_test, MI_train, df1, MItraincor, correlationbuild1, correlationbuild1Melt, mean1, meanMI_lm0, meanMIPredict1)
 ```
 
-
-**Conclusion**
+**Final Conclusion**
 
 + Our Model is significant with an accurate R Squared Value of 1! (Rare Case No Doubt!). 
 
-+ So our MAD for the Test Data in MI with Ozone as the major contributing Pollutant looks little smaller in case of Test Data as compared to that of the Train Data, indicating an underfitting Model. 
++ So our MAD for the Test Data in MI with Ozone as the major contributing Pollutant looks little smaller in case of Test Data as compared to that of the Train Data, indicating an underfitting Model. One important aspect to take note is that our Null Model itself has a MAD value which is itself less than next Model that we have fitted across the data. So technically the Null Model is our best Model Fit, and hence we have build just one more Model to show that our Null Model is the best. 
 
 + But overall Model performance was good mainly due to the data that we have essentially choosen to build and Predict the Model.  
 
-+ Since, our first Model itself was a good fit hence we did not venture out to Fit more Model along this data frame. It definitely has a lot of scope to do a lot more study with this dataframe. But due to our limited Project Scope, we are unable to explore more. 
++ It definitely has a lot of scope to do a lot more study with this dataframe. But due to our limited Project Scope, we are unable to explore more. 
 
 **US Prediction**
 ```{r}
@@ -257,13 +280,35 @@ ggplot(data = All_train) + geom_point(aes(y = arithmetic_mean, x = arithmetic_st
   facet_wrap(~method_name)
 ```
 
-**Linear Regression Model for Ozone Data for US**
+***Linear Regression Model for Ozone Data for US***
+**Model0 for US**
 ```{r}
 meanAll_lm0 <- lm(arithmetic_mean ~ 1, data = All_train)
 summary(meanAll_lm0)
 # Compute the MAD value
 median(abs(meanAll_lm0$residuals))
 ```
+
+So as it can be seen that our MAD value for the Null Model for th entire US Data on the Pollutant Ozone is pretty much low, which is kind of a perfect Model for being a Null Model. 
+```{r}
+ggplot(meanAll_lm0, aes(x=.resid)) + geom_histogram() 
+```
+Prediction at 95% confidence interval
+```{r}
+meanAllPredict0 <- predict(meanAll_lm0, newdata=All_test, se.fit=TRUE,
+                         interval="prediction", level=0.95)
+```
+
+**MAD Value for Prediction**
+```{r}
+df0All <- abs(meanAllPredict0$fit[,1]-All_test["arithmetic_mean"])
+(testMad0 <- median(as.numeric(df0All$arithmetic_mean)))
+```
+
+**Findings**
+So, our MAD value for Test Data: **0.005169092**
+        MAD value for Train Data: **0.005163092**
+Wow! So we got an exact Test and Train Data Prediction. So we are 95% Confident that our Model Prediction for our Model0 for predicting the US Data on the arithmetic mean of the presence of the Pollutant Ozone is a perfect fit. 
 
 ```{r}
 cor(All_train$arithmetic_mean, All_train$arithmetic_standard_dev)
@@ -307,7 +352,7 @@ correlationbuild2Melt
 # Heatmap of Correlation For Numerical Predictors
 ggplot(correlationbuild2Melt, aes(x=x, y=y)) + geom_tile(aes(fill=Correlation)) + scale_fill_gradient2(low = muted("red"), mid = "white", high = "plum", guide = guide_colorbar(ticks = FALSE, barheight = 10), limits=c(-1, 1)) + theme_minimal() + labs(x=NULL, y = NULL)
 ```
-
+**Model 1 for US**
 ```{r}
 # Model 1: Build to Understand the effect of the Predictors on the Response Variable 
 mean1 <- lm(arithmetic_mean ~  year + observation_count + observation_percent + valid_day_count + required_day_count + arithmetic_standard_dev + first_max_value + second_max_value + third_max_value + fourth_max_value + ninety_nine_percentile + ninety_eight_percentile + ninety_five_percentile + ninety_percentile + seventy_five_percentile + fifty_percentile + ten_percentile + norm_mean + state_name, data = All_train)
@@ -354,18 +399,18 @@ df1 <- abs(meanPredict1$fit[,1]-All_test["arithmetic_mean"])
 Let's clear our dataframe now
 
 ```{r}
-rm(All_test, All_train, correlationbuild2, correlationbuild2Melt, correlationbuild1, df1, mean1, meanAll_lm0, meanPredict1)
+rm(All_test, All_train, correlationbuild2, correlationbuild2Melt, df1, mean1, meanAll_lm0, meanPredict1)
 ```
 
 
-**Conclusion**
+**Final Conclusion for US Data on Ozone**
 
-+ The MAD value for the Test seems to be at a little higher side than the Train Data for the entire US data with Ozone as the main contributing pollutant. 
++ The MAD value for the Test data for Model 1 on US data seems to be at a little higher side than the Train Data for the entire US data with Ozone as the main contributing pollutant. 
 
 + Our Model is again significant with an accurate R Squared Value of 1! So for obvious reason it is not difficult to get that ideal R Square Value. 
 
 + But overall Model performance was good mainly due to the data that we have essentially choosen to build and Predict the Model.  
 
-+ Since, our first Model itself was a good fit hence we did not venture out to Fit more Model along this data frame. It definitely has a lot of scope to do a lot more study with this dataframe. But due to our limited Project Scope, we are unable to explore more. 
++ Since, our first Model0 itself was a good fit hence we did not venture out to Fit more Model along this data frame. It definitely has a lot of scope to do a lot more study with this dataframe. But due to our limited Project Scope, we are unable to explore more. 
 
 
