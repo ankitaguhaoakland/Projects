@@ -31,10 +31,7 @@ Our first step is to import the data into our environment.
 eda <- read.table("cleaned2_AQ.csv", header = TRUE, sep = ",")
 ```
 
-After importing the data, we filter only the values measuring Ozone, and then 
-we find the mean of the arithmetic_mean values. From there, we normalize the 
-arithmetic_means.
-=======
+
 After importing the data, we filter only the values measuring Ozone, and then
 we find the mean of the arithmetic_mean values. From there, we normalize the 
 arithmetic_means.
@@ -113,21 +110,6 @@ tricounty_ozone %>%
   geom_point(aes(x = year, y = norm_mean, color = address)) +
   facet_wrap( ~ county_name)
 
-```
-
-
-
-=======
-To narrow our analysis, we filter first by state and then find the counties which
-have the greatest number of data points.   
-```{r State and County Filters}
-mi_ozone <- eda_ozone %>% 
-  filter(state_name == "Michigan")
-
-list <- mi_ozone %>% 
-  group_by(county_name) %>% 
-  summarize(n = n()) %>% 
-  arrange(desc(n)) 
 ```
 
 Okay, let's try to visualize these with respect to our Michigan location over 
