@@ -1,7 +1,8 @@
 ---
-title: "Predictive Regression Modeling For Ozone in MI and in US"
+title: "Linear Regression Modeling For Ozone Data in MI and in US"
 output: html_document
-Author: "AKJ"
+Author: "Ankita Guha, Kara Marsh, Jacob Martin"
+Date: "April 22, 2018"
 ---
 
 ```{r setup, include=FALSE}
@@ -119,7 +120,8 @@ ggplot(data = MI_train) + geom_point(aes(y = arithmetic_mean, x = arithmetic_sta
   facet_wrap(~method_name)
 ```
 
-****Linear Regression Model for Ozone Data for MI****
+
+****Linear Regression Model for Ozone Data of MI****
 **Model 0 for MI**
 ```{r}
 meanMI_lm0 <- lm(arithmetic_mean ~ 1, data = MI_train)
@@ -146,7 +148,7 @@ df0 <- abs(meanMIPredict0$fit[,1]-MI_test["arithmetic_mean"])
 (testMad0 <- median(as.numeric(df0$arithmetic_mean)))
 ```
 
-**Findings**
+**Findings on MI Data Predictions**
 So, our MAD value for Test Data: 0.003643001 
         MAD value for Train Data: 0.003508
 Although MAD for Test Data is little more than that of the Train Data, but we can almost say that we are 95% confident that our Model0 has an almost perfect fit.       
@@ -251,7 +253,7 @@ Let's clean up some of our memory space for next iteration of analysis.
 rm(MI_test, MI_train, df1, MItraincor, correlationbuild1, correlationbuild1Melt, mean1, meanMI_lm0, meanMIPredict1)
 ```
 
-**Final Conclusion**
+**Fidings on MI Data Prediction**
 
 + Our Model is significant with an accurate R Squared Value of 1! (Rare Case No Doubt!). 
 
@@ -305,7 +307,7 @@ df0All <- abs(meanAllPredict0$fit[,1]-All_test["arithmetic_mean"])
 (testMad0 <- median(as.numeric(df0All$arithmetic_mean)))
 ```
 
-**Findings**
+**Findings on US Data Predictions**
 So, our MAD value for Test Data: **0.005169092**
         MAD value for Train Data: **0.005163092**
 Wow! So we got an exact Test and Train Data Prediction. So we are 95% Confident that our Model Prediction for our Model0 for predicting the US Data on the arithmetic mean of the presence of the Pollutant Ozone is a perfect fit. 
@@ -403,7 +405,7 @@ rm(All_test, All_train, correlationbuild2, correlationbuild2Melt, df1, mean1, me
 ```
 
 
-**Final Conclusion for US Data on Ozone**
+**Final Conclusion**
 
 + The MAD value for the Test data for Model 1 on US data seems to be at a little higher side than the Train Data for the entire US data with Ozone as the main contributing pollutant. 
 
@@ -411,6 +413,18 @@ rm(All_test, All_train, correlationbuild2, correlationbuild2Melt, df1, mean1, me
 
 + But overall Model performance was good mainly due to the data that we have essentially choosen to build and Predict the Model.  
 
-+ Since, our first Model0 itself was a good fit hence we did not venture out to Fit more Model along this data frame. It definitely has a lot of scope to do a lot more study with this dataframe. But due to our limited Project Scope, we are unable to explore more. 
++ Since, our first Model0 itself was a good fit hence we did not venture out to Fit more Model along this data frame. It definitely has a lot of scope to do a lot more study with this dataframe. But due to our limited Project Scope, we are unable to explore more. One interesting point here is the method_name which is blank seems to have captured the majority of the Ozone data contributing as a major Pollutant. We actually tried to remove the blank method_name but that was the major test that captured the major chunk of some of the major Pollutants such as Ozone. We tried but could not replace the blank string value with some string such as "Unknown". 
+
++ For *US*, MAD value for Test Data: **0.005169092**
+        MAD value for Train Data: **0.005163092**
+Wow! So we got an exact Test and Train Data Prediction. So we are 95% Confident that our Model Prediction for our Model0 for predicting the US Data on the arithmetic mean of the presence of the Pollutant Ozone is a perfect fit. 
+
++ For *MI*, our MAD value for Test Data: **0.003643001** 
+        MAD value for Train Data: **0.003508**
+Although MAD for Test Data is little more than that of the Train Data, but we can almost say that we are 95% confident that our Model0 has an almost perfect fit.
+
+
+
+
 
 
