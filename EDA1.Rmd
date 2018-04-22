@@ -1,7 +1,7 @@
 ---
 title: "Exploratory Data Analysis Part 1"
 output: html_document
-Authors: "Ankita Guha, Kara Marsh, Jacob Martin"
+Authors: "Ankita Guha, Kara Marsh"
 Date: "April 22, 2018"
 ---
 
@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r reading cleaned dataframe}
-eda <- read.table("cleaned2_AQ.csv", header = TRUE, sep = ",")
+eda <- read.table("cleaned_AQ.csv", header = TRUE, sep = ",")
 ```
 
 ***Proposition 1***
@@ -251,12 +251,12 @@ write.csv(eda1, file = "eda1.csv")
 write.csv(eda1987, file = "eda1987.csv")
 write.csv(eda2017, file = "eda2017.csv") 
 write.csv(eda2, file = "eda2.csv")        #Entire US with 2017 & 1987
-write.csv(eda2_States, file = "eda2_States.csv")  # 4 States with 2017 & 1987
+#write.csv(eda2_States, file = "eda2_States.csv")  # 4 States with 2017 & 1987
 ```
 
 Let's try to free some of the used spaces for better use with our memory and for being able to fit other EDA's conviniently.
 ```{r clear memory space}
-rm(map1, map1987, map2017, eda2_States, eda1, eda1987, eda2, eda2017)
+rm(map1, map1987, map2017, eda1, eda1987, eda2, eda2017)
 ```
 
 **Conclusion**
