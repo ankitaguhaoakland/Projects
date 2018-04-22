@@ -1,6 +1,6 @@
 ---
 title: "TriCountyEDA"
-author: "Kara Marsh"
+author: "Kara Marsh and Ankita Guha"
 date: "April 16, 2018"
 output: html_document
 ---
@@ -22,6 +22,7 @@ library(maptools)
 library(gpclib) 
 library(sp)
 gpclibPermit()
+
 ```
 ## Tri County Analysis
 
@@ -30,14 +31,22 @@ Our first step is to import the data into our environment.
 eda <- read.table("cleaned2_AQ.csv", header = TRUE, sep = ",")
 ```
 
-After importing the data, we filter only the values measuring Ozone, and then we find the mean of the arithmetic_mean values. From there, we normalize the arithmetic_means.
+After importing the data, we filter only the values measuring Ozone, and then 
+we find the mean of the arithmetic_mean values. From there, we normalize the 
+arithmetic_means.
+=======
+After importing the data, we filter only the values measuring Ozone, and then
+we find the mean of the arithmetic_mean values. From there, we normalize the 
+arithmetic_means.
+
 ```{r Ozone filter and normalization}
 eda_ozone <- eda %>% filter(parameter_name == 'Ozone')
 avg_mean <- mean(eda_ozone$arithmetic_mean)
 eda_ozone$norm_mean <- eda_ozone$arithmetic_mean/avg_mean
 ```
 
-To narrow our analysis, we filter first by state and then find the counties which have the greatest number of data points.   
+To narrow our analysis, we filter first by state and then find the counties 
+which have the greatest number of data points.   
 ```{r State and County Filters}
 mi_ozone <- eda_ozone %>% 
   filter(state_name == "Michigan")
@@ -47,25 +56,8 @@ list <- mi_ozone %>%
   summarize(n = n()) %>% 
   arrange(desc(n)) 
 ```
-
-Okay, let's try to visualize these with respect to our Michigan location over the areas where there are maximum observed Ozone values measured during that particular part of the day, when the Pollutants data was collected. 
-
-```{r Michigan Map showing Ozone Distribution across Counties}
-map_MI <- get_map(location = c(lon = mean(mi_ozone$longitude), lat = mean(mi_ozone$latitude)), zoom = 6,
-                      maptype = "satellite", scale = 2)
-
-ggmap(map_MI) +
-geom_point(data = mi_ozone, aes(x = longitude, y = latitude, colour = county_name, alpha = 0.7), size = 5, shape = 21) + guides(fill=FALSE, alpha=FALSE, size=TRUE)
-
-# ggmap(map_MI) +
-#   geom_point(data = mi_ozone, aes(x = longitude, y = latitude, colour = county_name, alpha = 0.7), size = 5, shape = 21) + guides(fill=guide_legend(reverse = TRUE, alpha=FALSE, size=TRUE))
-# 
-# 
-# # guides(fill = guide_legend(reverse = TRUE, override.aes = 
-# #         list(alpha = 1)))
-```
-
-We create another data frame that just has the three counties with the greatest number of data points.
+We create another data frame that just has the three counties with the greatest
+number of data points.
 ```{r}
 tricounty_ozone <- mi_ozone %>% 
   filter(county_name == list$county_name[1] | 
@@ -85,31 +77,16 @@ tricounty_ozone %>%
   ggplot() +
   geom_point(aes(x = year, y = norm_mean, color = county_name))  
 ```
-
-Let's try to visualize them in the distribution of the Ozone in these 3 Counties in particular in Michigan Map.
-
-```{r tricounty Michigan}
-
-ThreeCountyMap <- qmap("michigan", zoom = 7, color = "color", legend = "topleft")
-ThreeCountyMap +
-geom_point(aes(x = longitude, y = latitude, colour = county_name, size = county_name),
-data = tricounty_ozone)
-ThreeCountyMap +
-stat_bin2d(
-aes(x = longitude, y = latitude, colour = county_name, fill = county_name),
-size = .5, bins = 30, alpha = 1/2,
-data = tricounty_ozone
-)
-
-```
-
-In the next graph, we color code the metric used to see if that pulls out any difference. 
+In the next graph, we color code the metric used to see if that pulls out any 
+difference. 
 ```{r}
 tricounty_ozone %>%
   ggplot() +
   geom_point(aes(x = year, y = norm_mean, color = metric_used))  
 ```
-Metric used does seem to correlate to different types of data. Specifically the red was associated with the daily maxima rather than the daily maximum of an average. We will remove the daily maxima from our evalation. 
+Metric used does seem to correlate to different types of data. Specifically the
+red was associated with the daily maxima rather than the daily maximum of an 
+average. We will remove the daily maxima from our evalation. 
 ```{r}
 odd_metric = "Daily maxima of observed hourly values (between 9:00 AM and 8:00 PM)"
 
@@ -127,7 +104,8 @@ tricounty_ozone %>%
   geom_point(aes(x = year, y = norm_mean, color = county_name))  
 ```
 
-It appears in the graph above that there are multiple values for one county in the same year. 
+It appears in the graph above that there are multiple values for one county 
+in the same year. 
 ```{r}
 tricounty_ozone %>%
   filter(metric_used != odd_metric) %>%
@@ -138,4 +116,69 @@ tricounty_ozone %>%
 ```
 
 
+
+=======
+To narrow our analysis, we filter first by state and then find the counties which
+have the greatest number of data points.   
+```{r State and County Filters}
+mi_ozone <- eda_ozone %>% 
+  filter(state_name == "Michigan")
+
+list <- mi_ozone %>% 
+  group_by(county_name) %>% 
+  summarize(n = n()) %>% 
+  arrange(desc(n)) 
+```
+
+Okay, let's try to visualize these with respect to our Michigan location over 
+the areas where there are maximum observed Ozone values measured during that 
+particular part of the day, when the Pollutants data was collected. 
+
+```{r Michigan Map showing Ozone Distribution across Counties}
+map_MI <- get_map(location = c(lon = mean(mi_ozone$longitude), 
+                               lat = mean(mi_ozone$latitude)), 
+                  zoom = 6,
+                  maptype = "satellite", 
+                  scale = 2)
+
+ggmap(map_MI) +
+geom_point(data = mi_ozone, 
+           aes(x = longitude, 
+               y = latitude, 
+               colour = county_name, 
+               alpha = 0.7), 
+           size = 5, 
+           shape = 21) + 
+  guides(fill=FALSE, alpha=FALSE, size=TRUE)
+
+# ggmap(map_MI) +
+#   geom_point(data = mi_ozone, aes(x = longitude, y = latitude, colour = county_name, alpha = 0.7), size = 5, shape = 21) + guides(fill=guide_legend(reverse = TRUE, alpha=FALSE, size=TRUE))
+# 
+# 
+# # guides(fill = guide_legend(reverse = TRUE, override.aes = 
+# #         list(alpha = 1)))
+```
+
+Let's try to visualize them in the distribution of the Ozone in these 3 
+Counties in particular in Michigan Map.
+
+```{r tricounty Michigan}
+
+ThreeCountyMap <- qmap("michigan", 
+                       zoom = 7, 
+                       color = "color", 
+                       legend = "topleft")
+
+ThreeCountyMap +
+stat_bin2d(aes(x = longitude, 
+               y = latitude, 
+               colour = county_name, 
+               fill = county_name),
+           size = .5, 
+           bins = 30, 
+           alpha = 1/2,
+           
+           data = tricounty_ozone)
+
+```
 
