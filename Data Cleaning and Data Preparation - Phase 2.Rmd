@@ -67,10 +67,17 @@ Finally let's check the summary of our dataframe, if we got any NA value or not!
 sapply(air_quality1, function(x) sum(is.na(x)))
 ```
 
+Let's write our cleaned file now for next level of analysis
+
+```{r}
+write.csv(air_quality1, file = "cleaned_AQ.csv")
+```
+
+Let's free some of our dataframe
+
 ```{r}
 rm(air_quality1)
 ```
-
 
 Okay, so looks like we are ready for our first level of EDA!  
 
