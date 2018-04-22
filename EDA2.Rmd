@@ -1,0 +1,190 @@
+---
+title: "Exploratory Data Analysis Part 2"
+output: html_document
+Authors: "Ankita Guha, Kara Marsh, jacob Martin"
+Date: "April 22, 2018"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+***Proposition 2***
+We would like to map the major pollutants in US in the States of Alabama, California, Michigan and Texas in the year of 1987 and 2017 as well as compare them across the Entire US. 
+
+
+**Data Preparation**
+To meet the purpose of Proposition 2, let's try to scoop out some of the chunk of datas that we already used in our EDA1.Rmd File. And then let's try to free some of the memory for the data frame which we aren't using. 
+
+```{r reading cleaned dataframe}
+eda <- read.table("eda2_States.csv", header = TRUE, sep = ",")
+
+# Dataframe ready for Analysis
+eda1 <- subset(eda, select = c(latitude, longitude, parameter_name, method_name, year, arithmetic_mean, arithmetic_standard_dev, state_name))
+rm(eda)
+
+# Reading Dataframe of Entire US
+edaUS <- read.table("eda1.csv", header = TRUE, sep = ",")
+# Dataframe ready for analysis
+edaUS1 <- subset(edaUS, select = c(latitude, longitude, parameter_name, method_name, year, arithmetic_mean, arithmetic_standard_dev, state_name))
+rm(edaUS)
+
+# Reading Dataframe of Entire US, for Yr 1987
+edaUS1987 <- read.table("eda1987.csv", header = TRUE, sep = ",")
+# Dataframe ready for analysis
+edaUS1987_1 <- subset(edaUS1987, select = c(latitude, longitude, parameter_name, method_name, year, arithmetic_mean, arithmetic_standard_dev, state_name))
+rm(edaUS1987)
+
+# Reading Dataframe of Entire US, for Yr 2017
+edaUS2017 <- read.table("eda2017.csv", header = TRUE, sep = ",")
+# Dataframe ready for analysis
+edaUS2017_1 <- subset(edaUS2017, select = c(latitude, longitude, parameter_name, method_name, year, arithmetic_mean, arithmetic_standard_dev, state_name))
+rm(edaUS2017)
+
+# Reading Dataframe of Entire US, for both Yr of 1987 & 2017
+edaUS2Yrs <- read.table("eda2.csv", header = TRUE, sep = ",")
+# Dataframe ready for analysis
+edaUS2Yrs_1 <- subset(edaUS2Yrs, select = c(latitude, longitude, parameter_name, method_name, year, arithmetic_mean, arithmetic_standard_dev, state_name))
+rm(edaUS2Yrs)
+
+```
+
+
+Load some of the library packages that might be necessary for this analysis
+```{r}
+library(ggplot2)
+library(ggmap)
+library(mapdata)
+library(maps)
+library(stringr)
+library(viridis)
+library(plyr)
+library(dplyr)
+```
+
+Let's try to map out the Pollutants distribution in the 4 States of our interest as seen in the data sets from the year of 1987 and 2017.
+```{r}
+pollutants <- count(eda1, 'parameter_name') %>% filter(freq > 300) 
+count(eda1, 'parameter_name')
+
+map1 <- get_map(location = c(lon = mean(eda1$longitude), lat = mean(eda1$latitude)), zoom = 4,
+                      maptype = "satellite", scale = 2)
+
+ggmap(map1) +
+  geom_point(data = eda1, aes(x = longitude, y = latitude, colour = state_name, alpha = 0.7), size = 5, shape = 21) + guides(fill=FALSE, alpha=FALSE, size=TRUE)
+
+```
+
+Let's try to see the pollutant data in the state of Michigan, California, Texas, and Alabama for the year of 1987 and 2017. 
+
+```{r pollutants in some States for 1987 and 2017}
+eda2_States <- eda1 %>% filter(state_name == "Michigan" | state_name == "California" | state_name == "Texas" | state_name == "Alabama") %>% arrange(desc(arithmetic_mean)) 
+eda1 %>% filter(state_name == "Michigan" | state_name == "California" | state_name == "Texas" | state_name == "Alabama") %>% arrange(desc(arithmetic_mean)) 
+```
+
+
+Let's try to visualize the state wise distribution of the mean of the pollutants across the States of Michigan, Texas, California, and Alabama. 
+
+```{r histogram for states}
+ggplot(data = eda2_States) + geom_histogram(aes(x = arithmetic_mean, binwidth = 30000, fill = state_name)) + scale_x_log10()
+```
+
+Let's try to figure out the frequency of the appearence of the Pollutants in the entire dataset, in the year of 1987, in the year of 2017 and in the dataset containing the Pollutants for both the year of 1987 & 2017. 
+
+
+Due to the wide variety of Pollutants as seen in the dataframe, we tried here to see the pattern of the various Pollutants data that are available in these datasets for the purpose of analysis. Filtered the counts of the Pollutants which are greater than the majority of the Pollutants as seen in the dataframe. 
+
+```{r pollutants across Entire US for 30 years}
+library(plyr)
+library(RColorBrewer)
+
+# Pollutants across the Entire US for 30 years
+pollutants1 <- count(edaUS1, 'parameter_name')  %>% filter(freq > 5000)
+count(edaUS1, 'parameter_name')
+# Histogram
+colourCount = length(unique(pollutants1$parameter_name))
+ggplot(pollutants1, aes(x = reorder(parameter_name,freq), freq, fill = parameter_name)) +
+   geom_bar(stat = "identity", position = "dodge") +
+   scale_fill_manual(values = colorRampPalette(brewer.pal(12, "Accent"))(colourCount)) +
+   scale_y_continuous(labels = scales::comma) + 
+   coord_flip()
+# Density Plot
+ggplot(pollutants1, aes(x=freq)) + geom_density(fill = "paleturquoise", alpha = 0.90) + scale_x_log10()
+# Density Overlaid on Histogram
+ggplot(pollutants1, aes(x=freq, y=..density..)) + geom_histogram(fill="turquoise", color="grey60", size=.2) + geom_density() + scale_x_log10()
+```
+
+Looks like Ozone is one of the top Pollutants, apart from Sulphur dioxide, Suspended particulate (TSP) etc along with PM2.5 - Local Conditions, PM10 Total 0-10um STP. Wind Speed, Outdoor Temperature etc are also seen to be captured in that particular day when the pollutant data was measured. This kind of gives an overview of the maximum contributing Pollutant contributors in the entire US so collected over a span of 30 years. 
+
+Let's next look into the Pollutants count across US in the year of 1987.  
+```{r pollutants across Entire US for 1987}
+# Pollutants across the entire US for 1987
+pollutants1987 <- count(edaUS1987_1, 'parameter_name')  %>% filter(freq > 100)
+count(edaUS1987_1, 'parameter_name')
+
+# Visualization
+ggplot(pollutants1987, aes(x = reorder(parameter_name,freq), freq, fill = parameter_name)) +
+   geom_bar(stat = "identity", position = "dodge") +
+   scale_fill_brewer(palette = "Set1") + 
+   scale_y_continuous(labels = scales::comma) + 
+   coord_flip()
+```
+
+Looks like Sulfur dioxide, Ozone, Suspended particulate, Carbon Monooxide are the main top contributing Pollutants in US for the year of 1987.
+
+
+Let's peep into our Pollutants data from the year of 2017 in the US. 
+```{r pollutants across Entire US for 2017}
+# Pollutants across the entire US for 2017
+pollutants2017 <- count(edaUS2017_1, 'parameter_name')  %>% filter(freq > 200)
+count(edaUS2017_1, 'parameter_name')
+
+# Visualization
+ggplot(pollutants2017, aes(x = reorder(parameter_name,freq), freq, fill = parameter_name)) +
+   geom_bar(stat = "identity", position = "dodge") +
+   scale_fill_brewer(palette = "Set2") + 
+   scale_y_continuous(labels = scales::comma) + 
+   coord_flip()
+```
+Ozone, Sulfur dioxide along with PM10 Total 0-10um STP, PM2.5- Local Conditions are some of the top Pollutants that are noted in US in the year of 2017.  
+
+
+Let's try to look at the Pollutants data in the entire US for both 1987 and 2017.
+```{r pollutants across Entire US for 1987 & 2017}
+# Pollutants across the entire US for both 1987 & 2017
+pollutants2 <- count(edaUS2Yrs_1, 'parameter_name') %>% filter(freq > 400)
+count(edaUS2Yrs_1, 'parameter_name')
+# Visualization
+ggplot(pollutants2, aes(x = reorder(parameter_name,freq), freq, fill = parameter_name)) +
+   geom_bar(stat = "identity", position = "dodge") +
+   scale_fill_brewer(palette = "Set2") + 
+   scale_y_continuous(labels = scales::comma) + 
+   coord_flip()
+```
+Some of the top contributing Pollutants that are apparently present in the entire datasets for both the year of 1987 & 2017 are Ozone, Sulphur dioxide, Suspended particulate (TSP) along with some other variables such as PM2.5 - Local Conditions, PM10 Total 0-10um STP. 
+
+
+Let's try to map it out in terms of the location in US Map. 
+```{r US Map Pollutants Mapping in Terms of 4 States AND in both 1987 & 2017}
+map2 <- qmap("michigan", zoom = 7, color = "color", legend = "topleft")
+map2 +
+geom_point(aes(x = longitude, y = latitude, colour = state_name, size = county_name),
+data = eda2_States)
+map2 +
+stat_bin2d(
+aes(x = longitude, y = latitude, colour = county_name, fill = county_name),
+size = .5, bins = 30, alpha = 1/2,
+data = eda2_States
+)
+```
+
+Let's clear some memory 
+
+```{r}
+rm(edaUS1987_1, edaUS2017_1, edaUS2Yrs_1, edaUS1, map1, map4)
+```
+
+
+Okay, so looks like we now have identified the Pollutant that have mostly contributed to the data sets in the state of Alabama, Calfornia, Michigan, and Texas in the year of both 1987 and 2017. As seen from the Map as well from the dataframe filtering we can conclude that **Ozone** is the top Pollutant contributor in these 4 States. 
+
+
