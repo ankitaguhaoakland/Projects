@@ -1,7 +1,7 @@
 ---
 title: "Data Cleaning and Data Preparation - Phase 2"
 output: html_document
-Author: "Ankita Guha, Kara Marsh, Jacob Martin"
+Author: "Ankita Guha, Kara Marsh"
 Date: "April 22, 2018"
 ---
 
@@ -9,10 +9,10 @@ Date: "April 22, 2018"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Let's read the previously cleaned CSV File into a seperate data frame to proceed with the cleaning process. 
+Let's read the previously cleaned CSV File into a seperate data frame to proceed with the cleaning process. So the datafile from Kaggle, was blank in method_name. So let's try to put "NA" inside the dataframe and then try to see if we can replace those NA's with something relevant. 
 
 ```{r Read the prev CSV into a df}
-air_quality1 <- read.csv(file='cleaned2_AQ.csv')
+air_quality1 <- read.csv(file='cleaned2_AQ.csv', na.strings = c("", "NA"))
 ```
 
 Let's check if all of our variables are cleaned and does not contain any missing values or data that might mislead our analysis.
@@ -21,7 +21,7 @@ Let's check if all of our variables are cleaned and does not contain any missing
 is.na.data.frame(air_quality1)
 ```
 
-So, looks like our dataframe does not have any NA values. But since it is a huge dataframe let's try to visualize if we have any missing data pattern just to be double sure. 
+So, looks like our dataframe does have NA values for method_name. But since it is a huge dataframe let's try to visualize if we have any missing data pattern just to be double sure. 
 
 ```{r}
 sapply(air_quality1, function(x) sum(is.na(x)))
@@ -34,17 +34,13 @@ make.true.NA <- function(x) if(is.character(x)||is.factor(x)){
 ```
 
 
-```{r}
-sapply(air_quality1, function(x) sum(is.na(x)))
-```
-
 
 ```{r plotting missing data if any}
 library(VIM)
-explore_missingdata <- aggr(air_quality1, col=c('lightgreen','red'), numbers=TRUE, sortVars=TRUE, labels=names(data),cex.axis=.4, gap=3, ylab=c("Histogram of missing data","Pattern"))
+explore_missingdata <- aggr(air_quality1, col=c('lightgreen','red'), numbers=TRUE, sortVars=TRUE, labels=names(data),cex.axis=.7, gap=3, ylab=c("Histogram of missing data","Pattern"))
 ```
+So, we have missing data for method_name. Well, precisely it was blank data and it was not even NA, so we had to figure a way to actually put NA values inside the dataframe and then proceed with our analysis. 
 
-Perfect! Looks like we do not have any missing data values any more. 
 
 ```{r dataframe structure}
 #str(air_quality1)
@@ -56,10 +52,19 @@ Let's clear some of our data frame
 rm(explore_missingdata, make.true.NA)
 ```
 
-Finally let's check the summary of our dataframe
+Okay, so after doing a little EDA we realized that this missing data has a lot of infleunce in our overall dataframe. So we decided to replace them with an easily identifiable variable content name as "Missing Data from Kaggle" so as to make it easy to spot on. 
+```{r}
+air_quality1$method_name <- as.character(air_quality1$method_name)
+ air_quality1$method_name <- ifelse(is.na(air_quality1$method_name), 
+             'Missing Data From Kaggle', air_quality1$method_name)
+ 
+```
+
+
+Finally let's check the summary of our dataframe, if we got any NA value or not!
 
 ```{r}
-#summary(air_quality1)
+sapply(air_quality1, function(x) sum(is.na(x)))
 ```
 
 ```{r}
@@ -69,5 +74,3 @@ rm(air_quality1)
 
 Okay, so looks like we are ready for our first level of EDA!  
 
-**Conclusion**
-As it is evident from our data frame that for the variable *method_name* we still have some NA values, but since it is a character string hence, it skipped from our identification of missing data values.We shall just leave these NA as is, and make sure that we minimize their impact on our analysis further. Moreover since these are character values or strings and hence statistical imputations such as Mean or Median won't make sense for obvious reasons. 
