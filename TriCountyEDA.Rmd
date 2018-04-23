@@ -28,7 +28,7 @@ gpclibPermit()
 
 Our first step is to import the data into our environment. 
 ```{r Reading in Data}
-eda <- read.table("cleaned2_AQ.csv", header = TRUE, sep = ",")
+eda <- read.table("data/cleaned_AQ.csv", header = TRUE, sep = ",")
 ```
 
 
