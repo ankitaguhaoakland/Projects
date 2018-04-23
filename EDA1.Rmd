@@ -1,8 +1,8 @@
 ---
 title: "Exploratory Data Analysis Part 1"
 output: html_document
-Authors: "Ankita Guha, Kara Marsh"
-Date: "April 22, 2018"
+authors: "Ankita Guha, Kara Marsh"
+date: "April 22, 2018"
 ---
 
 ```{r setup, include=FALSE}
