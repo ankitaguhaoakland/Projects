@@ -1,8 +1,8 @@
 ---
-title: "Linear Regression Modeling For Ozone Data in MI and in US"
+title: "Comparative Linear Regression Modeling For Ozone Data in MI and in US"
 output: html_document
-Author: "Ankita Guha, Kara Marsh, Jacob Martin"
-Date: "April 22, 2018"
+author: "Ankita Guha, Kara Marsh"
+date: "April 22, 2018"
 ---
 
 ```{r setup, include=FALSE}
@@ -15,17 +15,7 @@ aqAll <- read.table("eda_ozone.csv", header = TRUE, sep = ",")
 aqAll$X.1 <- aqAll$X <-NULL
 aqMI <- read.table("mi_ozone.csv", header = TRUE, sep = ",")
 aqMI$X.1 <- aqMI$X <- aqMI$exceptional_data_count <- NULL
-#aqMI$method_name <- sub("^$", "Unknown", aqMI$method_name)
 
-# levels <- levels(aqMI$method_name)
-# levels[length(levels) + 1] <- "Unknown"
-# aqMI$method_name <- factor(aqMI$method_name, levels = levels)
-# aqMI$method_name[is.na(aqMI$method_name)] <- "Unknown"
-
-# levels(method_name)<-c(levels(method_name),"None")  #Add the extra level to your factor
-# aqMI[is.na(aqMI)] <- "Unknown" 
-
-#load('AirQuality.RData')
 ```
 
 **Partition Data into Training & Test Data Sets for MI**
@@ -61,7 +51,8 @@ library(scales)
 library(boot)
 ```
 
-**MI Prediction**
+**MI Prediction Models**
+Let's do some basic EDA to get some ideas on the variables that might have some influence over the Model perfomance.
 ```{r Histogram of MI Train Data }
 ggplot(data = MI_train) + geom_histogram(aes(x = arithmetic_mean), fill = "steelblue", colour="Black")
 ```
@@ -100,7 +91,7 @@ ggplot(data = MI_train) + geom_point(aes(y = arithmetic_mean, x = year))
 
 
 ```{r}
-# Scatterplots of Total_Charges vs Total_Costs faceted along Payment_Typology_1
+# Scatterplots of arithmetic_mean vs first_max_value faceted along county_name
 ggplot(data = MI_train) + geom_point(aes(y = arithmetic_mean, x = first_max_value)) + 
   facet_wrap(~county_name)
 ```
@@ -120,16 +111,19 @@ ggplot(data = MI_train) + geom_point(aes(y = arithmetic_mean, x = arithmetic_sta
   facet_wrap(~method_name)
 ```
 
+As we can see from our plots that the "Missing Data From Kaggle" are the main Test or method_name used to capture the paramter_name or the Air Pollutant constituent. 
 
 ****Linear Regression Model for Ozone Data of MI****
-**Model 0 for MI**
+Let's try to build Linear Regression Model to predict the arithmetic_mean
+
+**Null Model for Comparison with MI Data**
 ```{r}
 meanMI_lm0 <- lm(arithmetic_mean ~ 1, data = MI_train)
 summary(meanMI_lm0)
 # Compute the MAD value
 median(abs(meanMI_lm0$residuals))
 ```
-So we got a pretty low MAD value which is like kind of perfect!
+So we got a pretty low MAD value for the Null Model which is like kind of perfect!
 
 Let's visualize the Residuals.
 ```{r}
@@ -148,10 +142,10 @@ df0 <- abs(meanMIPredict0$fit[,1]-MI_test["arithmetic_mean"])
 (testMad0 <- median(as.numeric(df0$arithmetic_mean)))
 ```
 
-**Findings on MI Data Predictions**
+**Findings on NUll Model for MI Data**
 So, our MAD value for Test Data: 0.003643001 
         MAD value for Train Data: 0.003508
-Although MAD for Test Data is little more than that of the Train Data, but we can almost say that we are 95% confident that our Model0 has an almost perfect fit.       
+Although MAD for Test Data is little more than that of the Train Data, but we can almost say that we are 95% confident that our Model0 or Null Model has an almost perfect fit.       
 
 ```{r}
 head(MI_train)
@@ -170,6 +164,7 @@ cor(MI_train$arithmetic_mean, MI_train$third_max_value)
 cor(MI_train$arithmetic_mean, MI_train$fourth_max_value)
 cor(MI_train$arithmetic_mean, MI_train$ninety_five_percentile)
 ```
+So looks like the arithmetic_mean has a high correlation with te ninety_five_percentile value.
 
 **Correlation Matrix**
 ```{r}
@@ -226,17 +221,18 @@ Let's try to visualize the Model
 ```{r}
 ggplot(mean1, aes(x=.resid)) + geom_histogram() 
 ```
-
+From the Residual Analysis, we considered to check our homeskedasticity of Variance along two of the most significant Predictors that is the method_name and norm_mean. Ideally we would like to see random scatter in our Residual Analysis, but for both the plot we can see that the Residuals are not scatttered randomly but accumulated over a certain point, forming a Hat like pattern indicating that the variance in the residuals is not constant.
 ```{r}
 # Residual Analysis by norm_mean
 ggplot(data=mean1, aes(x=.fitted, y = .resid)) + geom_point(aes(color=norm_mean)) + labs(x="Fitted Values", y="Residuals")
 
 # Residual Analysis by method_name
-ggplot(data=mean1, aes(x=.fitted, y = .resid)) + geom_point(aes(color=first_max_value)) + labs(x="Fitted Values", y="Residuals")
+ggplot(data=mean1, aes(x=.fitted, y = .resid)) + geom_point(aes(color=method_name)) + labs(x="Fitted Values", y="Residuals")
 ```
 
+The Residuals also seemed to have the major influence from the unknown Test method_name which was initially blank and we renamed it as "Missing Data From Kaggle"
 ```{r}
-# Making Prediction with Test Data and 95% Confidence Interval
+# Making Prediction with Test Data at 95% Confidence Interval
 meanMIPredict1 <- predict(mean1, newdata=MI_test, se.fit=TRUE,
                          interval="prediction", level=0.95)
 ```
@@ -245,6 +241,19 @@ meanMIPredict1 <- predict(mean1, newdata=MI_test, se.fit=TRUE,
 ```{r}
 df1 <- abs(meanMIPredict1$fit[,1]-MI_test["arithmetic_mean"])
 (testMad1 <- median(as.numeric(df1$arithmetic_mean)))
+```
+Looking at our p, value from the Anova Test, looks like we have a very good Fit Model!
+
+```{r}
+anova(mean1)
+```
+
+Our data looks almost like normally distributed. The normal distribution has skew and kurtosis values of zero. It is a measure of data symmetry. As a rule, negative skewness indicates that the mean of the data values is less than the median, and the data distribution is left-skewed. Kurtosis describes the tail shape of the data distribution. The Positive value as seen from our Kurtosis indicates that our data has a fat tailed data distribution.
+
+```{r}
+library(e1071) 
+skewness(mean1$residuals)
+kurtosis(mean1$residuals)
 ```
 
 Let's clean up some of our memory space for next iteration of analysis.
@@ -257,11 +266,16 @@ rm(MI_test, MI_train, df1, MItraincor, correlationbuild1, correlationbuild1Melt,
 
 + Our Model is significant with an accurate R Squared Value of 1! (Rare Case No Doubt!). 
 
-+ So our MAD for the Test Data in MI with Ozone as the major contributing Pollutant looks little smaller in case of Test Data as compared to that of the Train Data, indicating an underfitting Model. One important aspect to take note is that our Null Model itself has a MAD value which is itself less than next Model that we have fitted across the data. So technically the Null Model is our best Model Fit, and hence we have build just one more Model to show that our Null Model is the best. 
++ The Null Model which we considered as the base for comparison has a very high performance value. So, we had to be cautious while building other Models. But we still went ahead to play with some of the variables until we get a Model which we thought would make a good fit to be here. After diligently considering some of the Model performance we considered this Model as our best Model as compared to our Null Model. 
 
-+ But overall Model performance was good mainly due to the data that we have essentially choosen to build and Predict the Model.  
++ MAD Value for Train: 3.231402e-17
+  MAD Value for Test: 3.469447e-17, representing signs of very little Overfit! Otherwise perfectly Fit Model even as seen from the Anova Test.
 
-+ It definitely has a lot of scope to do a lot more study with this dataframe. But due to our limited Project Scope, we are unable to explore more. 
++ But overall Model performance was good mainly due to the data that we choose to build and Predict the Model.  
+
++ It definitely has a lot of scope to do a lot more study with this dataframe. But due to our limited Project Scope, we would have to restrict ourselves here. 
+
+
 
 **US Prediction**
 ```{r}
@@ -282,8 +296,10 @@ ggplot(data = All_train) + geom_point(aes(y = arithmetic_mean, x = arithmetic_st
   facet_wrap(~method_name)
 ```
 
-***Linear Regression Model for Ozone Data for US***
-**Model0 for US**
+***Linear Regression Model for Ozone Data of US***
+Let's try to build Linear Regression Model to predict the arithmetic_mean
+
+**Null Model for Comparison with US Data**
 ```{r}
 meanAll_lm0 <- lm(arithmetic_mean ~ 1, data = All_train)
 summary(meanAll_lm0)
@@ -323,6 +339,7 @@ cor(All_train$arithmetic_mean, All_train$third_max_value)
 cor(All_train$arithmetic_mean, All_train$fourth_max_value)
 cor(All_train$arithmetic_mean, All_train$ninety_five_percentile)
 ```
+The maximum correlation of the arith_mean seems to be with the ninety_five_percentile for the entire US data based on Ozone.
 
 **Correlation Matrix**
 ```{r}
@@ -357,38 +374,37 @@ ggplot(correlationbuild2Melt, aes(x=x, y=y)) + geom_tile(aes(fill=Correlation)) 
 **Model 1 for US**
 ```{r}
 # Model 1: Build to Understand the effect of the Predictors on the Response Variable 
-mean1 <- lm(arithmetic_mean ~  year + observation_count + observation_percent + valid_day_count + required_day_count + arithmetic_standard_dev + first_max_value + second_max_value + third_max_value + fourth_max_value + ninety_nine_percentile + ninety_eight_percentile + ninety_five_percentile + ninety_percentile + seventy_five_percentile + fifty_percentile + ten_percentile + norm_mean + state_name, data = All_train)
+mean1US <- lm(arithmetic_mean ~  year + observation_count + observation_percent + valid_day_count + required_day_count + arithmetic_standard_dev + first_max_value + second_max_value + third_max_value + fourth_max_value + ninety_nine_percentile + ninety_eight_percentile + ninety_five_percentile + ninety_percentile + seventy_five_percentile + fifty_percentile + ten_percentile + norm_mean + state_name, data = All_train)
 
-summary(mean1)
+summary(mean1US)
 ```
 
 
 ```{r}
 # Compute the MAD value
-median(abs(mean1$residuals))
+median(abs(mean1US$residuals))
 ```
 
 ```{r}
-mean1$coefficients
+mean1US$coefficients
 ```
 
 ```{r}
-ggplot(mean1, aes(x=.resid)) + geom_histogram() + scale_x_log10()
-
-#ggplot(totalCharges13, aes(x=.resid, binwidth=30000)) + geom_histogram() + scale_x_log10()
+ggplot(mean1US, aes(x=.resid)) + geom_histogram() + scale_x_log10()
 ```
 
 ```{r}
 # Residual Analysis by state_name
-ggplot(data=mean1, aes(x=.fitted, y = .resid)) + geom_point(aes(color=state_name)) + labs(x="Fitted Values", y="Residuals")
+ggplot(data=mean1US, aes(x=.fitted, y = .resid)) + geom_point(aes(color=state_name)) + labs(x="Fitted Values", y="Residuals")
 
-# Residual Analysis by first_max_value
-ggplot(data=mean1, aes(x=.fitted, y = .resid)) + geom_point(aes(color=first_max_value)) + labs(x="Fitted Values", y="Residuals")
+# Residual Analysis by year
+ggplot(data=mean1US, aes(x=.fitted, y = .resid)) + geom_point(aes(color=year)) + labs(x="Fitted Values", y="Residuals")
 ```
+Seems like a lot new parameter_name which could have contributed as Pollutant has been observed as data was gathered over the period of time.
 
 ```{r}
 # Making Prediction with Test Data and 95% Confidence Interval
-meanPredict1 <- predict(mean1, newdata=All_test, se.fit=TRUE,
+meanPredict1 <- predict(mean1US, newdata=All_test, se.fit=TRUE,
                          interval="prediction", level=0.95)
 ```
 
@@ -397,11 +413,24 @@ meanPredict1 <- predict(mean1, newdata=All_test, se.fit=TRUE,
 df1 <- abs(meanPredict1$fit[,1]-All_test["arithmetic_mean"])
 (testMad1 <- median(as.numeric(df1$arithmetic_mean)))
 ```
+Looking at our p, value from the Anova Test, looks like we have a very good Fit Model!
+```{r}
+anova(mean1US)
+```
+
+Our data looks almost like normally distributed. The normal distribution has skew and kurtosis values of zero. It is a measure of data symmetry. As a rule, Positive skewness would indicate that the mean of the data values is larger than the median, and our data distribution is right-skewed. Kurtosis describes the tail shape of the data distribution. The Positive value as seen from our Kurtosis indicates that our data has a fat tailed data distribution.
+
+```{r}
+library(e1071) 
+skewness(mean1US$residuals)
+kurtosis(mean1US$residuals)
+```
+
 
 Let's clear our dataframe now
 
 ```{r}
-rm(All_test, All_train, correlationbuild2, correlationbuild2Melt, df1, mean1, meanAll_lm0, meanPredict1)
+rm(All_test, All_train, correlationbuild2, correlationbuild2Melt, df1, mean1US, meanAll_lm0, meanPredict1)
 ```
 
 
@@ -409,20 +438,17 @@ rm(All_test, All_train, correlationbuild2, correlationbuild2Melt, df1, mean1, me
 
 + The MAD value for the Test data for Model 1 on US data seems to be at a little higher side than the Train Data for the entire US data with Ozone as the main contributing pollutant. 
 
-+ Our Model is again significant with an accurate R Squared Value of 1! So for obvious reason it is not difficult to get that ideal R Square Value. 
++ Our Model is again significant with an accurate R Squared Value of 1! So for obvious reason it is not difficult to get that ideal R Square Value, provided you take real good time and effort to clean and normalize the data, again that also depends on the kind of dataets that you are using for Modeling. 
 
-+ But overall Model performance was good mainly due to the data that we have essentially choosen to build and Predict the Model.  
++ The Null Model which we considered as the base for comparison has a very high performance value. So, we had to be cautious while building other Models based on both MI and US data. But we still went ahead to play with some of the variables until we get a Model which we thought would make a good fit to be here. After diligently considering some of the Model performances we considered these 2 Models as our best Model as compared to our Null Model for comparing the Ozone data for both MI and US. 
 
-+ Since, our first Model0 itself was a good fit hence we did not venture out to Fit more Model along this data frame. It definitely has a lot of scope to do a lot more study with this dataframe. But due to our limited Project Scope, we are unable to explore more. One interesting point here is the method_name which is blank seems to have captured the majority of the Ozone data contributing as a major Pollutant. We actually tried to remove the blank method_name but that was the major test that captured the major chunk of some of the major Pollutants such as Ozone. We tried but could not replace the blank string value with some string such as "Unknown". 
-
-+ For *US*, MAD value for Test Data: **0.005169092**
-        MAD value for Train Data: **0.005163092**
-Wow! So we got an exact Test and Train Data Prediction. So we are 95% Confident that our Model Prediction for our Model0 for predicting the US Data on the arithmetic mean of the presence of the Pollutant Ozone is a perfect fit. 
-
-+ For *MI*, our MAD value for Test Data: **0.003643001** 
-        MAD value for Train Data: **0.003508**
-Although MAD for Test Data is little more than that of the Train Data, but we can almost say that we are 95% confident that our Model0 has an almost perfect fit.
-
++ For *US*, MAD value for Train Data: **1.134721e-09**
+        MAD value for Test Data: **1.15255e-09**
+Although MAD for Test Data is little more than that of the Train Data, indicating a little underfit but we can certainly say that we are 95% confident that our Model has an almost perfect fit.
+        
++ For *MI*, our MAD value for Train Data: **0.003508** 
+        MAD value for Test Data: **0.003643001**
+Wow! So we got almost an exact Test and Train Data Prediction. So we are 95% Confident that our Model Prediction for our Model for predicting the US Data on the arithmetic mean of the presence of the Pollutant Ozone is a perfect fit. 
 
 
 
