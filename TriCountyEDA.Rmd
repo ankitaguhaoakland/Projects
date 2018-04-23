@@ -168,5 +168,6 @@ Let's write the dataframe that we used here for our analysis, to another CSV Fil
 
 ```{r}
 write.csv(eda_ozone, file = "eda_ozone.csv")
+write.csv(mi_ozone, file = "mi_ozone.csv")
 ```
 
