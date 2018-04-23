@@ -1,7 +1,7 @@
 ---
-title: "Predictive Non Linear Modelling For Air Quality Data of 4 US States for the year of 1987 & 2017"
+title: "Comparing Predictive Non Linear Modelling For Air Quality Data of 4 US States for the year of 1987 & 2017"
 output: html_document
-author: "Ankita Guha, Kara Marsh, Jacob Martin"
+author: "Ankita Guha, Kara Marsh"
 Date: April 22, 2018
 ---
 
@@ -29,14 +29,14 @@ library(glmnet)
 
 **Data Preparation**
 ```{r}
-aq4States <- read.table("eda2_States.csv", header = TRUE, sep = ",")
-aq4States$X <-NULL
+aq4States1 <- read.table("eda2_States.csv", header = TRUE, sep = ",")
+aq4States1$X <-NULL
 
-na.omit(aq4States)
+aq4States <- aq4States1 %>% filter(year == "1987" | year == "2017")
 
 
 # Creating Another Collumn With Pollutant as Binary Variable  
-nrow(aq4States)
+nrow(na.omit(aq4States1))
 
 for(i in 1:nrow(aq4States)){
   if(aq4States$method_name[i] == "Ozone"){
@@ -49,7 +49,7 @@ for(i in 1:nrow(aq4States)){
 aq4States$Pollutant <- as.factor(ifelse(aq4States$parameter_name=="Ozone",1,0))
 str(aq4States)
 head(aq4States)
-
+rm(aq4States1)
 ```
 
 
@@ -57,6 +57,7 @@ head(aq4States)
 aq4States$parameter_name <- NULL
 aq4States$method_name <- NULL
 str(aq4States)
+summary(aq4States)
 ```
 
 
@@ -68,6 +69,7 @@ sample_size <- ceiling(0.30 * nrow(aq4States))
 testrecs <- sample(nrow(aq4States),sample_size)
 Ozone_test <- aq4States[testrecs,]
 Ozone_train <- aq4States[-testrecs,] 
+
 ```
 
 
@@ -107,7 +109,7 @@ cm_LogM1 <- confusionMatrix(Ozone_fit_predictions$yhat_LogM1, Ozone_fit_predicti
                             positive = "1")
 cm_LogM1
 ```
-Woah! Looks like our Model has an Accuracy of 87% and the Sensitivity or the Probability of True Positive is only 43% at the 95% confidence interval.
+Looks like our Model has an Accuracy of 87% and the Sensitivity or the Probability of True Positive is only 53% at the 95% confidence interval. And looks like our Confidence Interval is also a tight fit indicating that our Rsquare Value or our Accuracy of Model Fit is a good fit at 95% confidence interval.
 
 ## Predictions on Test Data for Model 1: Logistic Regression
 ```{r}
@@ -115,6 +117,12 @@ prob_LogM1 <- predict(Ozone_LogM1, newdata=Ozone_test, type="response", se.fit=F
 pred_LogM1 <- (prob_LogM1 > 0.5) * 1
 head(pred_LogM1)
 ```
+
+Let's free some of our Memory space
+```{r}
+rm(Ozone_LogM1)
+```
+
 
 **Simple Decision Tree**
 ```{r}
@@ -142,6 +150,7 @@ cm_tree <- confusionMatrix(Ozone_fit_predictions$yhat_tree, Ozone_fit_prediction
                             positive = "1")
 cm_tree
 ```
+Looks like our Model has an Accuracy of 97% and the Sensitivity or the Probability of True Positive is also 97% at the 95% confidence interval. And looks like our Confidence Interval is also a tight fit indicating that our Rsquare Value or our Accuracy of Model Fit is a good fit at 95% confidence interval.
 
 ## Predictions on Test Data for Model 2: Simple Decision Tree
 ```{r}
@@ -170,6 +179,7 @@ cm_rf <- confusionMatrix(Ozone_fit_predictions$yhat_rf, Ozone_fit_predictions$ya
                             positive = "1")
 cm_rf
 ```
+Looks like our Model has an Accuracy of 98% and the Sensitivity or the Probability of True Positive is 95% at the 95% confidence interval. And looks like our Confidence Interval is also a tight fit indicating that our Rsquare Value or our Accuracy of Model Fit is a good fit at 95% confidence interval.
 
 ## Predictions on Test Data for Model 3: Random Forest
 ```{r}
@@ -275,8 +285,7 @@ sprintf("Model 3 - Random Forest: Accuracy = %8.4f Sensitivity = %8.4f",
         cm_predrf$byClass["Sensitivity"])
 ```
 
-** Conclusion **
-
-Best Model Accuracy: Simple Decision Tree
-Best Model Sensitivity: Logistic Regression
+**Conclusion**
++ Best Model Accuracy: Simple Decision Tree
++ Best Model Sensitivity: Random Forest
 
