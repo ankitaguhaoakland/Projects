@@ -10,6 +10,7 @@
 
 
 
+<meta name="date" content="2018-04-22" />
 
 <title>Data Cleaning and Data Preparation - Phase 1</title>
 
@@ -116,6 +117,7 @@ $(document).ready(function () {
 
 
 <h1 class="title toc-ignore">Data Cleaning and Data Preparation - Phase 1</h1>
+<h4 class="date"><em>April 22, 2018</em></h4>
 
 </div>
 
@@ -345,7 +347,7 @@ summary(air_quality)</code></pre>
 <pre class="r"><code>rm(cleaned1_AQ)</code></pre>
 <p>For the next phase of cleaning and preparing the data, let’s save the dataframe into a new CSV File, so that we can continue our analysis with the next cleaned dataset in our next RMD File.</p>
 <pre class="r"><code># Write CSV in R
-write.csv(cleaned2_AQ, file = &quot;cleaned2_AQ.csv&quot;)</code></pre>
+write.csv(cleaned2_AQ, file = &quot;data/cleaned2_AQ.csv&quot;)</code></pre>
 <p>Let’s check the structure of the various variables used in the data frame.</p>
 <pre class="r"><code>str(cleaned2_AQ)</code></pre>
 <pre><code>## 'data.frame':    654120 obs. of  35 variables:
