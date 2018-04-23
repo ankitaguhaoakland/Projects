@@ -193,11 +193,18 @@ data = eda2_States
 )
 ```
 
+Let's write this file so that we can use it for next leg of analysis
+
+```{r}
+write.csv(eda2_States, file = "eda2_States.csv")
+```
+
 Let's clear some memory 
 
 ```{r}
 rm(edaUS1987_1, edaUS2017_1, edaUS2Yrs_1, edaUS1, map1, map2, pollutants1)
 ```
+
 
 
 Okay, so looks like we now have identified the Pollutant that have mostly contributed to the data sets in the state of Alabama, Calfornia, Michigan, and Texas in the year of both 1987 and 2017. As seen from the Map as well from the dataframe filtering we can conclude that **Ozone** is the top Pollutant contributor in these 4 States. 
