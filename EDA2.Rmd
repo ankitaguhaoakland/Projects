@@ -1,8 +1,8 @@
 ---
 title: "Exploratory Data Analysis Part 2"
 output: html_document
-Authors: "Ankita Guha, Kara Marsh, jacob Martin"
-Date: "April 22, 2018"
+authors: "Ankita Guha, Kara Marsh, jacob Martin"
+date: "April 22, 2018"
 ---
 
 ```{r setup, include=FALSE}
@@ -166,14 +166,12 @@ Some of the top contributing Pollutants that are apparently present in the entir
 
 Let's try to map it out in terms of the location in US Map. 
 ```{r US Map Pollutants Mapping in Terms of 4 States AND in both 1987 & 2017}
-map2 <- qmap("michigan", zoom = 7, color = "color", legend = "topleft")
-map2 +
-geom_point(aes(x = longitude, y = latitude, colour = state_name, size = county_name),
-data = eda2_States)
+map2 <- qmap("unitedstates", zoom = 4, color = "color", legend = "topright")
+
 map2 +
 stat_bin2d(
-aes(x = longitude, y = latitude, colour = county_name, fill = county_name),
-size = .5, bins = 30, alpha = 1/2,
+aes(x = longitude, y = latitude, colour = state_name, fill = state_name),
+size = .6, bins = 30, alpha = 1/2,
 data = eda2_States
 )
 ```
@@ -181,7 +179,7 @@ data = eda2_States
 Let's clear some memory 
 
 ```{r}
-rm(edaUS1987_1, edaUS2017_1, edaUS2Yrs_1, edaUS1, map1, map4)
+rm(edaUS1987_1, edaUS2017_1, edaUS2Yrs_1, edaUS1, map1, map2)
 ```
 
 
