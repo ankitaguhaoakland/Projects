@@ -22,13 +22,13 @@ library(maptools)
 library(gpclib) 
 library(sp)
 gpclibPermit()
-
 ```
+
 ## Tri County Analysis
 
 Our first step is to import the data into our environment. 
 ```{r Reading in Data}
-eda <- read.table("data/cleaned_AQ.csv", header = TRUE, sep = ",")
+eda <- read.table("cleaned_AQ.csv", header = TRUE, sep = ",")
 ```
 
 
@@ -162,5 +162,11 @@ stat_bin2d(aes(x = longitude,
            
            data = tricounty_ozone)
 
+```
+
+Let's write the dataframe that we used here for our analysis, to another CSV File for continuing our next phase of analysis
+
+```{r}
+write.csv(eda_ozone, file = "eda_ozone.csv")
 ```
 
