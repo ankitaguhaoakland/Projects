@@ -1,7 +1,7 @@
 ---
 title: "Exploratory Data Analysis Part 1"
 output: html_document
-authors: "Ankita Guha, Kara Marsh"
+author: "Ankita Guha, Kara Marsh"
 date: "April 22, 2018"
 ---
 
@@ -61,7 +61,9 @@ data for the year of 1987 and 2017, which indicates the beggining and the
 end of the air pollutants data available respectively. 
 
 ```{r data for all the 30 years}
-filter(eda1,year == "1987")
+# filter(eda1,year == "1987") 
+
+filter(eda1,year == "1987") %>% head()
 # filter(eda1,year == "1988")
 # filter(eda1,year == "1989")
 # filter(eda1,year == "1990")
@@ -91,19 +93,20 @@ filter(eda1,year == "1987")
 # filter(eda1,year == "2014")
 # filter(eda1,year == "2015")
 # filter(eda1,year == "2016")
-filter(eda1,year == "2017")
+# filter(eda1,year == "2017")
+filter(eda1,year == "2017") %>% head() 
 ```
 
 ```{r mean of pollutants for 1987 & 2017}
 # Filtering highest and lowest mean of pollutants data for the year 1987 
 eda1987 <- eda1 %>% filter(year == "1987") %>% arrange(desc(arithmetic_mean))
-eda1 %>% filter(year == "1987") %>% arrange(desc(arithmetic_mean))
-eda1 %>% filter(year == "1987") %>% arrange(arithmetic_mean)
+eda1987 %>% head()
+eda1987 %>% arrange(arithmetic_mean) %>% head()
 
 # Filtering highest and lowest mean of pollutants data for the year 2017
 eda2017 <- eda1 %>% filter(year == "2017") %>% arrange(desc(arithmetic_mean))
-eda1 %>% filter(year == "2017") %>% arrange(desc(arithmetic_mean))
-eda1 %>% filter(year == "2017") %>% arrange(arithmetic_mean)
+eda2017 %>% head()
+eda2017 %>% arrange(arithmetic_mean) %>% head()
 
 # Creating Another Data Frame for comparing Mean Value of Pollutants Data Across the Year 1987 & 2017
 eda2 <- eda1 %>% filter(year == "1987" | year == "2017") %>% arrange(desc(arithmetic_mean))
