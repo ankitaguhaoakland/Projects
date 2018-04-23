@@ -1,6 +1,6 @@
 ---
 title: "Exploratory Data Analysis Part 2"
-authors: "Ankita Guha, Kara Marsh"
+author: "Ankita Guha, Kara Marsh"
 date: "April 22, 2018"
 output: html_document
 ---
@@ -185,7 +185,6 @@ Some of the other top contributing Pollutants that are apparently present in the
 Let's try to map it out in terms of the location in US Map. 
 ```{r US Map Pollutants Mapping in Terms of 4 States AND in both 1987 & 2017}
 map2 <- qmap("unitedstates", zoom = 4, color = "color", legend = "topright")
-
 map2 +
 stat_bin2d(
 aes(x = longitude, y = latitude, colour = state_name, fill = state_name),
