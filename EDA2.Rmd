@@ -108,7 +108,6 @@ rm(edaUS2Yrs)
 ```
 
 
-
 Let's try to see the pollutant data in the state of Michigan, California, Texas, and Alabama for the year of 1987 and 2017. 
 
 ```{r pollutants in some States for 1987 and 2017}
@@ -119,12 +118,8 @@ eda2_States <- eda1 %>%
            state_name == "Alabama") %>% 
   arrange(desc(arithmetic_mean)) 
 
-eda1 %>% 
-  filter(state_name == "Michigan" | 
-           state_name == "California" | 
-           state_name == "Texas" | 
-           state_name == "Alabama") %>% 
-  arrange(desc(arithmetic_mean)) 
+eda2_States %>% head()
+
 ```
 
 Let's try to visualize the state wise distribution of the mean of the 
