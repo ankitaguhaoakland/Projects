@@ -132,7 +132,7 @@ Associated RMD files:
 # Future Project Scope
 It would be nice to have a Forecasting of the Pollutants Data across the time lines or performing a time series Prediction of the Pollutant Data across this Dataset.
 
-# N.B
+# Direction to be Followed For Running the RMD Files
 Due to the enormous data quantity it would be necessary to follow the steps in downloading and running the data files as explicitly mentioned in the following steps below:
 
 + Step 1: Download the Data File from Kaggle (https://www.kaggle.com/epa/air-quality/data)
