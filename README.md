@@ -63,7 +63,7 @@ information we were going to consider in our analysis
 consider the best way to filter the data and make executive decisions on what
 data sets could be combined without reducing the integrity of the results. 
 4) The blank method_name has a great deal of influence over the dataset.
-5) Mostly the parameter_name Ozone as the chief Pollutant has been found to be captured under the blank method_name.
+5) Mostly the parameter_name Ozone as the chief Pollutant has been found to be captured under the blank method_name, which we thought we could ignore initially.
 6) Normalizing one subset of data frame improved not only the Model Fit but also produced an exact match of the train and test data prediction in case of building some of the Non Linear Regression Model. 
 7) While performing the Logistic Regression Model Fit, we found that Ozone that has been identified as the main Pollutant in previous models of Linear Regression Model Fit mainly due to the variable  method_name or the unnkown test, which was blank in the original dataset that we got from Kaggle. Thus Ozone seemed to be out of the perview of our data, when we were not considering the blank method_name. We had a tough time to figure out on how to replace the blank string data values with 'NA' and then replace these 'NAs' with 'Missing Data From Kaggle'. That's because in the initial Data Cleaning & Preparation Stage these blank data values were not captured as NA. And we were on the verge of losing a significant chunk of Pollutant data that have been captured by this specific test or the method_name which was initially blank from the original Kaggle data.  
 
@@ -79,7 +79,7 @@ data sets could be combined without reducing the integrity of the results.
 
 2) What else did we learn?
 
-+ Getting perfect Model Fit was mainly due to the fact that we used some of our Response Variables in our Models for predicting the Predictors.
++ Getting perfect Model Fit was mainly due to the fact that we used some of our Predictors which might actually act well as parts of  Response Variables for predicting the Model Fitness.
 + Plot maps from the latitude and the longitude data
 + In ggplot each of the color palletes has a limit in the number of variables that it can show while plotting. So to get all the variables counted in the color Pallete we had to use a function that would first count the variables and then assign the colors to them accordingly.
 + For and If-Else Loop inside RMD File.
