@@ -6,7 +6,7 @@ Team Members
 ------------
 Ankita Guha
 Kara Marsh
-Jacob Martin
+
 
 Project Title
 -------------
@@ -19,7 +19,7 @@ Project Type I - Analysis of EPA data
 
 Executive Summary of the Proposed Project
 -----------------------------------------
-We will be analyzing a large data set from the EPA. This data set contains information on the location, time, type, substance, and results of individual sample testing. We will be performing exploratory data analysis in R to find some general trends within subsets of the data. Based on this exploratory analysis, we will pick some subset of the data on which to perform linear and non-linear analysis to find models and relationships that may be predictive of future samples. Because this data set covers sampling from 1987 to 2017, we can test our models using the data within the set. For example, seeing if we can model trends from 1987 to 2015 in order to predict 2016 and 2017 values. 
+We will be analyzing a large data set from the EPA. This data set contains information on the location, time, type, substance, and results of individual sample testing. We will be performing exploratory data analysis in R to find some general trends within subsets of the data. Based on this exploratory analysis, we will pick some subset of the data on which to perform linear and non-linear analysis to find models and relationships that may be predictive of future samples. Because this data set covers sampling from 1987 to 2017, we can test our models using the data within the set. For example, getting an idea on which are the top Pollutants that are contributing as the major Pollutant in the datasets and towards seeing if we can model trends from 1987 to 2015 in order to predict 2016 and 2017 values. 
 
 
 Data Needs and Sources
