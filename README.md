@@ -9,7 +9,7 @@
 
 *Project Title*
 -------------
-Analyzing EPA data to determine patterns in pollution
+Analyzing EPA (Environmental Protection Agency) data to determine patterns in pollution
 
 *Type of Final Project*
 ---------------------
@@ -28,9 +28,8 @@ from 1987 to 2017, we have tested our models using the data within the set.
 
 *Data Needs and Sources*
 -----------------------
-We have used the following dataset from Kaggle:
-Source: https://www.kaggle.com/epa/air-quality
-Link of the original Data File Used to Clean and Prepare the Data Frames: https://www.kaggle.com/epa/air-quality/data 
++ We have used the following dataset from Kaggle; Source: https://www.kaggle.com/epa/air-quality
++ Link of the original Data File Used to Clean and Prepare the Data Frames: https://www.kaggle.com/epa/air-quality/data 
 
 *Important Variables Used & Brief Description*
 -----------------------------------
@@ -46,6 +45,13 @@ Link of the original Data File Used to Clean and Prepare the Data Frames: https:
 + state_name: The name of the state where the monitoring site is located.
 + county_name: The name of the county where the monitoring site is located.
 + norm_mean: Calculated column of Normalized arithmetic mean value.
++ first_max_value: The highest value for the year.
++ observation_count:The number of observations (samples) taken during the year.
++ observation_percent: The percent representing the number of observations taken with respect to the number scheduled to be taken during the year. This is only calculated for monitors where measurements are required (e.g., only certain parameters).
++ valid_day_count: The number of days during the year where the daily monitoring criteria were met
++ required_day_count: The number of days during the year which the monitor was scheduled to take samples if measurements are required.
++ date_of_last_change: The date the last time any numeric values in this record were updated.
++ ninety_five_percentile: The value from this monitor for which 95 per cent of the rest of the measured values for the year are equal to or less than.
 
 *Challenges Encountered*
 -----------------------
@@ -75,13 +81,17 @@ data sets could be combined without reducing the integrity of the results.
 
 + Getting perfect Model Fit was mainly due to the fact that we used some of our Response Variables in our Models for predicting the Predictors.
 + Plot maps from the latitude and the longitude data
++ In ggplot each of the color palletes has a limit in the number of variables that it can show while plotting. So to get all the variables counted in the color Pallete we had to use a function that would first count the variables and then assign the colors to them accordingly.
++ For and If-Else Loop inside RMD File.
 
 3) What third thing did we learn?
 
 + For the Map to be more explicit in nature, one can increase or decrease the **zoom** argument to acheieve the desired level of Map visual. We have decided our zoom to be at a desired level, for the purpose of providing a suitable aerial view of all the 4 States that we are looking into. 
-+ Stack Overflow helped us a lot! 
 + Another interesting fact point that we learned while using ggmap() is that after a certain point of time, query used to fetch map data might not run, if a certain quota of fetching map API data from google is met. We came across an error something like: **geocode failed with status OVER_QUERY_LIMIT, location = "michigan"**, that means that we have run our code many times and hence the IP address has met it's limit to use and fetch API data from Google. 
 **Source: https://stackoverflow.com/questions/tagged/google-geocoding-api?page=4&sort=unanswered**
++ Got comfortable with GitHub.
++ Got first hand exposure in Slack to collaborate with others more flexibly with team members.
+
 
 
 **Explanation of the Project stages and files**
@@ -89,24 +99,24 @@ data sets could be combined without reducing the integrity of the results.
 
 *Necessary Packages to install:*
 
-boot 	
-coefplot 	
-dplyr 	
-e1071 	
-ggmap 	
-ggplot2 	
-gpclib 	
-mapdata 	
-maps 	
-maptools
-plyr 	
-RColorBrewer
-reshape2
-scales 	
-sp 	
-stringr 	
-VIM 	
-viridis
++ boot 	
++ coefplot 	
++ dplyr 	
++ e1071 	
++ ggmap 	
++ ggplot2 	
++ gpclib 	
++ mapdata 	
++ maps 	
++ maptools
++ plyr 	
++ RColorBrewer
++ reshape2
++ scales 	
++ sp 	
++ stringr 	
++ VIM 	
++ viridis
 
 # Data Cleaning
 Associated RMD files: 
@@ -129,8 +139,6 @@ Associated RMD files:
 + NonLinearModelsFor1987_2017_4States
 + PredictiveRegressionModelingForMI&US
 
-# Future Project Scope
-It would be nice to have a Forecasting of the Pollutants Data across the time lines or performing a time series Prediction of the Pollutant Data across this Dataset.
 
 # Direction to be Followed For Running the RMD Files
 Due to the enormous data quantity it would be necessary to follow the steps in downloading and running the data files as explicitly mentioned in the following steps below:
@@ -145,3 +153,21 @@ Due to the enormous data quantity it would be necessary to follow the steps in d
 + Step 6: Run the PredictiveRegressionModelingForMI&US
 
 Once the original data file is downloaded from Kaggle. The individual CSV data files will be created while running the above mentioned RMD Files step bt step. These individual CSV data files so created after running the RMD Files, are used in our subsequent analysis that are projected in our RMD Files as well.
+
+OR
+
+Alternatively, you can get the link of the data files from here:
+
+
+# Findings & Conclusion From Our Analysis
+
++ *Ozone* is one of the top Pollutant contributor in US
++ Some of the top Pollutant States are: *Alaska*, *Alabama*, & *California*
++ USA Today also seems to conform to these above two facts: *From USA TODAY:California has eight of 10 most polluted U.S. cities* https://usat.ly/2H7ihty
+
+
+# Future Project Scope
+There are a lot of future scope that could be performed on this dataset and these are:
++ It would be nice to have a Forecasting of the Pollutants Data across the time lines 
++ Performing a time series Prediction of the Pollutant Data across this Dataset.
++ Take into consideration of some of the outside influencers such as the presence of the Number of Cars, Industrial Belts etc that could have influenced the resultant measurement.
