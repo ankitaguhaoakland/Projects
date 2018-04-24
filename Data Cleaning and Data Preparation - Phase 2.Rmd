@@ -1,7 +1,7 @@
 ---
 title: "Data Cleaning and Data Preparation - Phase 2"
 output: html_document
-author: "Ankita Guha, Kara Marsh"
+author: "Ankita Guha and Kara Marsh"
 date: "April 22, 2018"
 ---
 
@@ -27,23 +27,23 @@ Let's check if all of our variables are cleaned and does not contain any
 missing values or data that might mislead our analysis.
 
 ```{r checking NA}
-is.na.data.frame(air_quality1)
+sum(is.na.data.frame(air_quality1))
 ```
 
-So, looks like our dataframe does have NA values for method_name. But 
-since it is a huge dataframe let's try to visualize if we have any missing
+So, looks like our dataframe does have NA values. But since it is a huge
+dataframe let's try to visualize if we have any missing
 data pattern just to be double sure. 
 
 ```{r}
 sapply(air_quality1, function(x) sum(is.na(x)))
 ```
+It looks like all of the NA values are from method_name. 
 
 ```{r}
 make.true.NA <- function(x) if(is.character(x)||is.factor(x)){
                                   is.na(x) <- x %in% c("NA", "N/A","???"); x} else {
                                   x}
 ```
-
 
 
 ```{r plotting missing data if any}

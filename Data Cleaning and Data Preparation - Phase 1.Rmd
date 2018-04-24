@@ -1,7 +1,7 @@
 ---
 title: 'Data Cleaning and Data Preparation - Phase 1'
 output: html_document
-authors: "Ankita Guha and Kara Marsh"
+author: "Ankita Guha and Kara Marsh"
 date: "April 22, 2018"
 ---
 
