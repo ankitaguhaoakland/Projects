@@ -86,7 +86,7 @@ data sets could be combined without reducing the integrity of the results.
 
 3) What third thing did we learn?
 
-+ For the Map to be more explicit in nature, one can increase or decrease the **zoom** argument to acheieve the desired level of Map visual. We have decided our zoom to be at a desired level, for the purpose of providing a suitable aerial view of all the 4 States that we are looking into. 
++ For the Map to be more explicit in nature, one can increase or decrease the **zoom** argument to acheieve the desired level of Map visual. We have decided our zoom to be at a desired level, for the purpose of providing a suitable aerial view of all the 4 States or the counties that we are looking into. 
 + Another interesting fact point that we learned while using ggmap() is that after a certain point of time, query used to fetch map data might not run, if a certain quota of fetching map API data from google is met. We came across an error something like: **geocode failed with status OVER_QUERY_LIMIT, location = "michigan"**, that means that we have run our code many times and hence the IP address has met it's limit to use and fetch API data from Google. 
 **Source: https://stackoverflow.com/questions/tagged/google-geocoding-api?page=4&sort=unanswered**
 + Got comfortable with GitHub.
