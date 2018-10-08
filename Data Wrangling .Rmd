@@ -1,0 +1,78 @@
+---
+title: "Data Preparation"
+author: "Ankita Guha"
+date: "October 6, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Let's load a few libraries we'll need:
+
+```{r}
+library(plyr)
+library(dplyr)
+library(ggplot2)
+library(reshape2)
+library(tidyr)
+#library(lubridate)
+```
+
+
+```{r reading patient survey data}
+PGRaw <- read.table("PressGaneyRaw.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
+
+#summary(PGRaw)
+
+str(PGRaw)
+```
+
+Let's convert the Dates from Factors to real Date for ease of analysis! 
+P.S: While using the function as.Date always enter the date format as in the data provided, NOT as the format in which you want.
+
+```{r factors to date}
+library(lubridate)
+
+ymd("20110604")
+
+PGRaw$AdmitDateLocal <- as.Date(mdy(PGRaw$AdmitDateLocal))
+PGRaw$DischargeDateLocal <- as.Date(mdy(PGRaw$DischargeDateLocal))
+PGRaw$RecordedDateLocal <- as.Date(mdy(PGRaw$RecordedDateLocal))
+
+
+PGRaw$SurveyCategoryID <- as.factor(PGRaw$SurveyCategoryID)
+PGRaw$DomainID <- as.factor(PGRaw$DomainID)
+PGRaw$QuestionID <- as.factor(PGRaw$QuestionID)
+PGRaw$QuestionTypeID <- as.factor(PGRaw$QuestionTypeID)
+PGRaw$SkipLogicAppliedQuestionTypeResponseID <- as.factor(PGRaw$SkipLogicAppliedQuestionTypeResponseID)
+
+
+#PGRaw$AdmitDateLocal
+#PGRaw$DischargeDateLocal
+#PGRaw$RecordedDateLocal
+
+```
+
+Let's check our dataframe now after conversion
+
+```{r checking dataframe}
+str(PGRaw)
+#head(PGRaw)
+```
+
+ Yup, all the Dates Variables (such as: AdmitDateLocal, DischargeDateLocal, and RecordedDateLocal) are now converted to Date format, instead of Factors, which are used essentially for Categorical Variable.
+
+```{r data overview}
+head(PGRaw)
+```
+
+Looks like our one of the major attribute "FIN" in exponential format. Let's check it's class and try to fetch and view the value when called upon. 
+```{r checking class and values of FIN}
+class(PGRaw$FIN)
+
+PGRaw$FIN
+```
+
+
